@@ -6,38 +6,25 @@ import scipy.ndimage
 from matplotlib import pyplot as plt
 from functools import partial
 
-def bilinear_interpolate(img, x, y):
+def bilinear_interpolate(img, coords):
   """
   http://en.wikipedia.org/wiki/Bilinear_interpolation
   """
-  x0 = np.floor(x).astype(int)
-  y0 = np.floor(y).astype(int)
-  x1 = x - x0
-  y1 = y - y0
+  int_coords = np.int32(coords)
+  x0, y0 = int_coords
+  dx, dy = coords - int_coords
 
-  # Interpolate for each image channel (no more than 3 channels)
-  num_channels = np.clip(img.shape[2], 1, 3)
-  result = np.empty(num_channels, np.uint8)
-  for chan in range(num_channels):
-    # pixels at the four corners
-    q11 = img[y0, x0, chan]
-    q21 = img[y0, x0+1, chan]
-    q12 = img[y0+1, x0, chan]
-    q22 = img[y0+1, x0+1, chan]
+  # Interpolate over every image channel
+  q11 = img[y0, x0]
+  q21 = img[y0, x0+1]
+  q12 = img[y0+1, x0]
+  q22 = img[y0+1, x0+1]
 
-    btm = x1 * q21 + (1. - x1) * q11
-    top = x1 * q22 + (1. - x1) * q12
-    inter_p = y1 * top + (1. - y1) * btm
-    result[chan] = int(inter_p)
+  btm = dx * q21 + (1. - dx) * q11
+  top = dx * q22 + (1. - dx) * q12
+  inter_pixel = dy * top + (1. - dy) * btm
 
-  return result
-
-def rect_points(points):
-  x, y, w, h = cv2.boundingRect(np.array([points], np.int32))
-  spacerw = int(w * 0.1)
-  spacerh = int(h * 0.1)
-  return [[x+spacerw, y+spacerh],
-          [x+w-spacerw, y+spacerh]]
+  return inter_pixel
 
 def min_max(points):
   return [np.min(points[:, 0]),
@@ -50,17 +37,20 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
   Warp each pixel from the src_image only within the
   ROI of the destination image (points in dst_points).
   """
-
   xmin, xmax, ymin, ymax = min_max(dst_points)
-  for x in range(xmin, xmax + 1):
-    for y in range(ymin, ymax + 1):
-      # Process pixels that are in a tesselation triangle
-      tri_index = delaunay.find_simplex([x, y])
-      if tri_index == -1: continue
+  # [(x, y)] to pixels within ROI
+  all_coords = np.asarray([(x, y) for y in xrange(ymin, ymax)
+                          for x in xrange(xmin, xmax)], np.int32)
+  # indices to vertices. -1 if pixel is not in any triangle
+  all_tri_indices = delaunay.find_simplex(all_coords)
+  tri_indices = np.nonzero(all_tri_indices != -1)[0]
 
-      # Affine transform and interpolate the pixel
-      out = np.dot(tri_affines[tri_index], np.array([x, y, 1]))
-      result_img[y, x] = bilinear_interpolate(src_img, out[0], out[1])
+  for tri_index in tri_indices:
+    # Affine transform and interpolate the pixel
+    x, y = all_coords[tri_index]
+    index = all_tri_indices[tri_index]
+    out_coords = np.dot(tri_affines[index], np.array([x, y, 1]))
+    result_img[y, x] = bilinear_interpolate(src_img, out_coords)
 
   return None
 
@@ -75,22 +65,35 @@ def triangular_affine_matrices(vertices, src_points, base_points):
   src_points: array of [x, y] points to landmarks for source image
   base_points: array of [x, y] points to landmarks for destination image
   """
+  ones = [1, 1, 1]
   for tri_indices in vertices:
-    src_tri = np.vstack((src_points[tri_indices, :].T, np.ones(3)))
-    dst_tri = np.vstack((base_points[tri_indices, :].T, np.ones(3)))
-    yield np.dot(src_tri, np.linalg.inv(dst_tri))
+    # mat = cv2.getAffineTransform(
+    #   (base_points[tri_indices, :]),
+    #   (src_points[tri_indices, :]))
+
+    src_tri = np.vstack((src_points[tri_indices, :].T, ones))
+    dst_tri = np.vstack((base_points[tri_indices, :].T, ones))
+    mat = np.dot(src_tri, np.linalg.inv(dst_tri))[:2, :]
+    yield mat
+
+def rect_points(points):
+  x, y, w, h = cv2.boundingRect(np.array([points], np.int32))
+  spacerw = int(w * 0.1)
+  spacerh = int(h * 0.1)
+  return [[x+spacerw, y+spacerh],
+          [x+w-spacerw, y+spacerh]]
 
 def warp_image(src_img, src_points, base_img, base_points):
   base_points = np.vstack([base_points, rect_points(base_points)])
   src_points = np.vstack([src_points, rect_points(src_points)])
   delaunay = spatial.Delaunay(base_points)
 
-  tri_affines = list(triangular_affine_matrices(
-    delaunay.simplices, src_points, base_points))
+  tri_affines = np.asarray(list(triangular_affine_matrices(
+    delaunay.simplices, src_points, base_points)))
 
   # Resultant image will not have an alpha channel
-  dims = cv2.split(base_img)
-  result_img = cv2.merge(dims[:3])
+  src_img = src_img[:, :, :3]
+  result_img = base_img[:, :, :3]
 
   process_warp(src_img, result_img, tri_affines, base_points, delaunay)
 
@@ -105,8 +108,7 @@ def face_points(classifier_folder, imgpath):
     return np.array([pair.split(' ') for pair in s.rstrip().split('\n')],
                     np.int32)
 
-if __name__ == "__main__":
-  from functools import partial
+def main():
   #Load source image
   face_points_func = partial(face_points, 'data')
   base_path = 'females/face1.jpeg'
@@ -142,5 +144,8 @@ if __name__ == "__main__":
   #cv2.destroyAllWindows()
   #Visualise result
   #dstIm.show()
+
+if __name__ == "__main__":
+  main()
 
   
