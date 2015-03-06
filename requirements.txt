@@ -1,0 +1,5 @@
+numpy
+scipy
+matplotlib
+cv2
+docopt

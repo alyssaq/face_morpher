@@ -5,7 +5,6 @@ import subprocess
 import scipy.ndimage
 from matplotlib import pyplot as plt
 from functools import partial
-import multiprocessing as mp
 
 def bilinear_interpolate(img, x, y):
   """
@@ -45,26 +44,6 @@ def min_max(points):
           np.max(points[:, 0]),
           np.min(points[:, 1]),
           np.max(points[:, 1])]
-
-def transform_pixel(src_img, result_img, tri_affines, delaunay, x, y):
-  # Process pixels that are in a tesselation triangle
-  print x, y
-  tri_index = delaunay.find_simplex([x, y])
-  if tri_index == -1: return
-
-  # Affine transform and interpolate the pixel
-  out = np.dot(tri_affines[tri_index], np.array([x, y, 1]))
-  return bilinear_interpolate(src_img, out[0], out[1])
-
-def process_warp_processes(src_img, result_img, tri_affines, dst_points, delaunay):
-  transform_pixel_func = partial(transform_pixel, src_img, result_img, tri_affines, delaunay)
-  xmin, xmax, ymin, ymax = min_max(dst_points)
-
-  pool = mp.Pool(processes=10)
-  results = [pool.apply(transform_pixel_func, args=(x,y,)) for y in range(ymin, ymax + 1) for x in range(xmin, xmax + 1)]
-  results.reshape((ymax+1-ymin, xmax+1-xmin, 3))
-  print results.shape
-  return result_img
 
 def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
   # Warp within the rect ROI of src image
