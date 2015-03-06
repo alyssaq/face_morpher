@@ -42,12 +42,10 @@ def main():
 
   passed = failed = 0
   #dst_img = np.asarray(dst_img * percent, np.uint8)
-  for i, path in enumerate(imgpaths[:3]):
+  for i, path in enumerate(imgpaths):
     print i, path
-    src_img = scipy.ndimage.imread(path)
-    dims = cv2.split(src_img)
-    src_img = cv2.merge(dims[:3])
 
+    src_img = scipy.ndimage.imread(path)
     src_points = face_points_func(path)
     if len(src_points) == 0:
       print 'No face'
