@@ -46,7 +46,11 @@ def min_max(points):
           np.max(points[:, 1])]
 
 def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
-  # Warp within the rect ROI of src image
+  """
+  Warp each pixel from the src_image only within the
+  ROI of the destination image (points in dst_points).
+  """
+
   xmin, xmax, ymin, ymax = min_max(dst_points)
   for x in range(xmin, xmax + 1):
     for y in range(ymin, ymax + 1):
@@ -63,6 +67,7 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
 def triangular_affine_matrices(vertices, src_points, base_points):
   """
   Calculate the affine transformation matrix for each triangle vertex
+  from base_points to src_points
 
   Input
   ---
@@ -80,7 +85,6 @@ def warp_image(src_img, src_points, base_img, base_points):
   src_points = np.vstack([src_points, rect_points(src_points)])
   delaunay = spatial.Delaunay(base_points)
 
-  # Find all triangle affine mapping from src to dest
   tri_affines = list(triangular_affine_matrices(
     delaunay.simplices, src_points, base_points))
 
