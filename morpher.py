@@ -93,10 +93,6 @@ def triangular_affine_matrices(vertices, src_points, base_points):
   """
   ones = [1, 1, 1]
   for tri_indices in vertices:
-    # mat = cv2.getAffineTransform(
-    #   (base_points[tri_indices, :]),
-    #   (src_points[tri_indices, :]))
-
     src_tri = np.vstack((src_points[tri_indices, :].T, ones))
     dst_tri = np.vstack((base_points[tri_indices, :].T, ones))
     mat = np.dot(src_tri, np.linalg.inv(dst_tri))[:2, :]
