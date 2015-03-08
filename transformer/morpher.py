@@ -8,39 +8,18 @@ from functools import partial
 import scipy.ndimage.measurements
 
 def bilinear_interpolate(img, coords):
-  """
+  """ Interpolates over every image channel
   http://en.wikipedia.org/wiki/Bilinear_interpolation
+  
+  :param img: max 3 channel image
+  :param coords: 2 x _m_ array. 1st row = xcoords, 2nd row = ycoords
+  :returns: array of interpolated pixels with same shape as coords
   """
   int_coords = np.int32(coords)
   x0, y0 = int_coords
   dx, dy = coords - int_coords
 
-  # Interpolate over every image channel
-  q11 = img[y0, x0]
-  q21 = img[y0, x0+1]
-  q12 = img[y0+1, x0]
-  q22 = img[y0+1, x0+1]
-
-  btm = dx * q21 + (1. - dx) * q11
-  top = dx * q22 + (1. - dx) * q12
-  inter_pixel = dy * top + (1. - dy) * btm
-
-  return inter_pixel
-
-def bilinear_interpolate_arr(img, coords):
-  """
-  http://en.wikipedia.org/wiki/Bilinear_interpolation
-
-  Input
-  -----
-  img: max 3 channel image
-  coords: 2 x m array. 1st row = xcoords, 2nd row = ycoords
-  """
-  int_coords = np.int32(coords)
-  x0, y0 = int_coords
-  dx, dy = coords - int_coords
-
-  # Interpolate over every image channel
+  # 4 Neighour pixels
   q11 = img[y0, x0]
   q21 = img[y0, x0+1]
   q12 = img[y0+1, x0]
@@ -76,7 +55,7 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
     out_coords = np.dot(tri_affines[simplex_index],
                         np.vstack((coords.T, np.ones(num_coords))))
     x, y = coords.T
-    result_img[y, x] = bilinear_interpolate_arr(src_img, out_coords)
+    result_img[y, x] = bilinear_interpolate(src_img, out_coords)
 
   return None
 
@@ -122,7 +101,7 @@ def warp_image(src_img, src_points, base_img, base_points):
   return result_img
 
 def face_points(classifier_folder, imgpath):
-  command = './bin/stasm_util -f {0} "{1}"'.format(classifier_folder, imgpath)
+  command = './bin/stasm_util -f "{0}" "{1}"'.format(classifier_folder, imgpath)
   s = subprocess.check_output(command, shell=True)
   if s.startswith("No face found"):
     return []
@@ -132,10 +111,10 @@ def face_points(classifier_folder, imgpath):
 
 def main():
   #Load source image
-  face_points_func = partial(face_points, 'data')
-  base_path = 'females/face1.jpeg'
-  srcIm_path = 'twba/+Foto am 02.03.15 _ 10 um 16.57.jpg'
-  src2Im_path = 'females/face1.jpg'
+  face_points_func = partial(face_points, '../data')
+  base_path = '../zoe.jpg'
+  srcIm_path = '../tyson.jpg'
+  src2Im_path = '../females/face1.jpg'
   src2 = scipy.ndimage.imread(src2Im_path)
   src2_points = face_points_func(src2Im_path)
   src1 = scipy.ndimage.imread(srcIm_path)
@@ -160,7 +139,7 @@ def main():
   plt.imshow(ave)
   #plt.subplot(2,2,4)
   #plt.imshow(ave2)
- # plt.show()
+  plt.show()
   #cv2.imshow('img', PIL2array(dstIm))
   #cv2.waitKey(0)
   #cv2.destroyAllWindows()

@@ -1,13 +1,17 @@
-"""Mass face morpher
+"""
+::
 
-Usage:
-  mass_morpher.py --data=<classifiers_folder> --images=<images_folder>
+  Mass face morpher
 
-Options:
-  -h --help          Show this screen.
-  --version          Show version.
-  --data=<folder>    Folder to .xml data for classifiers
-  --images=<folder>  Folder to images (.jpg, .jpeg, .png)
+  Usage:
+    mass_morpher.py --data=<classifiers_folder> --images=<images_folder>
+
+  Options:
+    -h, --help         Show this screen.
+    --version          Show version.
+    --data=<folder>    Folder to .xml data for classifiers
+    --images=<folder>  Folder to images (.jpg, .jpeg, .png)
+
 """
 from docopt import docopt
 import os
@@ -38,7 +42,7 @@ def main():
 
   face_points_func = partial(morpher.face_points, args['--data'])
   percent = 1 / (len(imgpaths) + 1.0)
-  basepath = 'base/female_average.jpg'
+  basepath = '../base/female_average.jpg'
   dst_img = scipy.ndimage.imread(basepath)
   base_points = face_points_func(basepath)
   base_img = np.copy(dst_img)
