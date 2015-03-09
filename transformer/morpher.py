@@ -11,7 +11,7 @@ import locator
 def bilinear_interpolate(img, coords):
   """ Interpolates over every image channel
   http://en.wikipedia.org/wiki/Bilinear_interpolation
-  
+
   :param img: max 3 channel image
   :param coords: 2 x _m_ array. 1st row = xcoords, 2nd row = ycoords
   :returns: array of interpolated pixels with same shape as coords
@@ -32,21 +32,26 @@ def bilinear_interpolate(img, coords):
 
   return inter_pixel.T
 
-def min_max(points):
-  return [np.min(points[:, 0]),
-          np.max(points[:, 0]) + 1,
-          np.min(points[:, 1]),
-          np.max(points[:, 1]) + 1]
+def grid_coordinates(points):
+  """ x,y grid coordinates within the ROI of supplied points
+
+  :param points: points to generate grid coordinates
+  :returns: array of (x, y) coordinates
+  """
+  xmin = np.min(points[:, 0])
+  xmax = np.max(points[:, 0]) + 1
+  ymin = np.min(points[:, 1])
+  ymax = np.max(points[:, 1]) + 1
+
+  return np.asarray([(x, y) for y in xrange(ymin, ymax)
+                     for x in xrange(xmin, xmax)], np.uint8)
 
 def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
   """
   Warp each triangle from the src_image only within the
   ROI of the destination image (points in dst_points).
   """
-  xmin, xmax, ymin, ymax = min_max(dst_points)
-  # [(x, y)] to pixels within ROI
-  roi_coords = np.asarray([(x, y) for y in xrange(ymin, ymax)
-                          for x in xrange(xmin, xmax)], np.int32)
+  roi_coords = grid_coordinates(dst_points)
   # indices to vertices. -1 if pixel is not in any triangle
   roi_tri_indices = delaunay.find_simplex(roi_coords)
 
@@ -62,14 +67,13 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
 
 def triangular_affine_matrices(vertices, src_points, base_points):
   """
-  Calculate the affine transformation matrix for each triangle vertex
-  from base_points to src_points
+  Calculate the affine transformation matrix for each
+  triangle (x,y) vertex from base_points to src_points
 
-  Input
-  ---
-  vertices: array of triplet indices to corners of triangle
-  src_points: array of [x, y] points to landmarks for source image
-  base_points: array of [x, y] points to landmarks for destination image
+  :param vertices: array of triplet indices to corners of triangle
+  :param src_points: array of [x, y] points to landmarks for source image
+  :param base_points: array of [x, y] points to landmarks for destination image
+  :returns: 2 x 3 affine matrix transformation for a triangle
   """
   ones = [1, 1, 1]
   for tri_indices in vertices:
@@ -80,7 +84,6 @@ def triangular_affine_matrices(vertices, src_points, base_points):
 
 def warp_image(src_img, src_points, base_img, base_points):
   delaunay = spatial.Delaunay(base_points)
-
   tri_affines = np.asarray(list(triangular_affine_matrices(
     delaunay.simplices, src_points, base_points)))
 
@@ -104,22 +107,6 @@ def save_mask(base_img, base_points):
   #print 'mask saved'
   return mask
 
-def blend(dest_img, base_img, base_points):
-  radius = 15  # kernel size
-  kernel = np.ones((radius, radius), np.uint8)
-
-  mask = np.zeros(base_img.shape[:2], np.uint8)
-  cv2.fillConvexPoly(mask, cv2.convexHull(base_points), 255)
-  mask = cv2.erode(mask, kernel)
-
-  mask = cv2.blur(mask, (15, 15))
-  mask = mask / 255.0
-
-  result_img = np.empty(base_img.shape, np.uint8)
-  for i in xrange(3):
-    result_img[..., i] = dest_img[..., i] * mask + base_img[..., i] * (1-mask)
-
-  return result_img
 
 def main():
   #Load source image
@@ -136,7 +123,9 @@ def main():
   #Perform transform
   dst_img = warp_image(src, src_points, base_img, base_points)
   ave = cv2.addWeighted(base_img, 0.5, dst_img, 0.5, 0)
-  blended_img = blend(dst_img, base_img, base_points)
+
+  import blender
+  blended_img = blender.alpha_feathering(dst_img, base_img, base_points)
 
   save_mask(base_img, base_points)
   scipy.misc.imsave('dest.jpg', dst_img)
