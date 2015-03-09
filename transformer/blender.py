@@ -1,5 +1,16 @@
 import cv2
 import numpy as np
+import scipy.sparse
+
+def mask_from_points(img, points):
+  radius = 15  # kernel size
+  kernel = np.ones((radius, radius), np.uint8)
+
+  mask = np.zeros(img.shape[:2], np.uint8)
+  cv2.fillConvexPoly(mask, cv2.convexHull(points), 255)
+  mask = cv2.erode(mask, kernel)
+
+  return mask
 
 def alpha_feathering(dest_img, base_img, base_points):
   radius = 15  # kernel size
@@ -52,7 +63,7 @@ def poission_blend(img_target, img_source, img_mask, offset=(0, 0)):
         if index - region_size[1] >= 0:
           A[index, index - region_size[1]] = -1
   A = A.tocsr()
-  print region_size, A.shape
+
   # create poisson matrix for b
   P = pyamg.gallery.poisson(img_mask.shape)
   # for each layer (ex. RGB)

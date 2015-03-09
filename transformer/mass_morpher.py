@@ -4,10 +4,11 @@
   Mass face morpher
 
   Usage:
-    mass_morpher.py --data=<classifiers_folder> --images=<images_folder>
+    mass_morpher.py --data=<classifiers_folder> --images=<images_folder> [--blend]
 
   Options:
     -h, --help         Show this screen.
+    --blend            Boolean flag to blend images after averaging
     --version          Show version.
     --data=<folder>    Folder to .xml data for classifiers
     --images=<folder>  Folder to images (.jpg, .jpeg, .png)
@@ -66,11 +67,15 @@ def main():
     dst_img += np.asarray(result_img * percent, np.uint8)
     passed += 1
 
-  dst_img = sharpen(dst_img)
+  if args['--blend']:
+    dst_img = sharpen(dst_img)
+    import blender
+    mask = blender.mask_from_points(base_img, base_points)
+    blended_img = blender.poission_blend(base_img, dst_img, mask)
 
   print 'Processed {0} face. {1} failed.'.format(passed, failed)
   plt.axis('off')
-  plt.imshow(dst_img)
+  plt.imshow(blended_img)
   plt.show()
 
 if __name__ == "__main__":
