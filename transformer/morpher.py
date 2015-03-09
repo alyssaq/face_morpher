@@ -79,8 +79,6 @@ def triangular_affine_matrices(vertices, src_points, base_points):
     yield mat
 
 def warp_image(src_img, src_points, base_img, base_points):
-  base_points = np.vstack([base_points, rect_points(base_points)])
-  src_points = np.vstack([src_points, rect_points(src_points)])
   delaunay = spatial.Delaunay(base_points)
 
   tri_affines = np.asarray(list(triangular_affine_matrices(
@@ -98,7 +96,6 @@ def save_mask(base_img, base_points):
   radius = 15  # kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
-  base_points = np.vstack([base_points, rect_points(base_points)])
   mask = np.zeros(base_img.shape[:2], np.uint8)
   cv2.fillConvexPoly(mask, cv2.convexHull(base_points), 255)
   mask = cv2.erode(mask, kernel)
@@ -111,7 +108,6 @@ def blend(dest_img, base_img, base_points):
   radius = 15  # kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
-  base_points = np.vstack([base_points, rect_points(base_points)])
   mask = np.zeros(base_img.shape[:2], np.uint8)
   cv2.fillConvexPoly(mask, cv2.convexHull(base_points), 255)
   mask = cv2.erode(mask, kernel)

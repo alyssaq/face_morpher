@@ -43,6 +43,7 @@ def main():
 
   face_points_func = partial(locator.face_points, args['--data'])
   percent = 1 / (len(imgpaths) + 1.0)
+  print percent
   basepath = '../base/female_average.jpg'
   dst_img = scipy.ndimage.imread(basepath)
   base_points = face_points_func(basepath)
