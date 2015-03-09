@@ -38,3 +38,27 @@ def face_points(classifier_folder, imgpath, add_boundary_points=True):
       points = np.vstack([points, boundary_points(points)])
 
     return points
+
+def average_points(point_set):
+  """ Averages a set of face points from images
+
+  :param point_set: _n_ x _m_ x 2 array of face points.
+  _n_ = number of images.
+  _m_ = number of face points per image
+  """
+  return np.mean(point_set, 0).astype(np.int32)
+
+def weighted_average_points(start_points, end_points, percent=0.5):
+  """ Weighted average of two sets of supplied points
+
+  :param start_points: _m_ x 2 array of start face points.
+  :param end_points: _m_ x 2 array of end face points.
+  :param percent: [0, 1] percentage weight on start_points
+  :returns: _m_ x 2 array of weighted average points
+  """
+  if percent <= 0:
+    return end_points
+  elif percent >= 1:
+    return start_points
+  else:
+    return np.asarray(start_points*percent + end_points*(1-percent), np.int32)
