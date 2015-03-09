@@ -42,9 +42,8 @@ def grid_coordinates(points):
   xmax = np.max(points[:, 0]) + 1
   ymin = np.min(points[:, 1])
   ymax = np.max(points[:, 1]) + 1
-
   return np.asarray([(x, y) for y in xrange(ymin, ymax)
-                     for x in xrange(xmin, xmax)], np.uint8)
+                     for x in xrange(xmin, xmax)], np.uint32)
 
 def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
   """
@@ -65,33 +64,36 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
 
   return None
 
-def triangular_affine_matrices(vertices, src_points, base_points):
+def triangular_affine_matrices(vertices, src_points, dest_points):
   """
   Calculate the affine transformation matrix for each
-  triangle (x,y) vertex from base_points to src_points
+  triangle (x,y) vertex from dest_points to src_points
 
   :param vertices: array of triplet indices to corners of triangle
   :param src_points: array of [x, y] points to landmarks for source image
-  :param base_points: array of [x, y] points to landmarks for destination image
+  :param dest_points: array of [x, y] points to landmarks for destination image
   :returns: 2 x 3 affine matrix transformation for a triangle
   """
   ones = [1, 1, 1]
   for tri_indices in vertices:
     src_tri = np.vstack((src_points[tri_indices, :].T, ones))
-    dst_tri = np.vstack((base_points[tri_indices, :].T, ones))
+    dst_tri = np.vstack((dest_points[tri_indices, :].T, ones))
     mat = np.dot(src_tri, np.linalg.inv(dst_tri))[:2, :]
     yield mat
 
-def warp_image(src_img, src_points, base_img, base_points):
-  delaunay = spatial.Delaunay(base_points)
-  tri_affines = np.asarray(list(triangular_affine_matrices(
-    delaunay.simplices, src_points, base_points)))
-
+def warp_image(src_img, src_points, dest_points, dest_shape):
   # Resultant image will not have an alpha channel
+  num_chans = 3
   src_img = src_img[:, :, :3]
-  result_img = np.copy(base_img[:, :, :3])
 
-  process_warp(src_img, result_img, tri_affines, base_points, delaunay)
+  rows, cols = dest_shape[:2]
+  result_img = np.zeros((rows, cols, num_chans), np.uint8)
+
+  delaunay = spatial.Delaunay(dest_points)
+  tri_affines = np.asarray(list(triangular_affine_matrices(
+    delaunay.simplices, src_points, dest_points)))
+
+  process_warp(src_img, result_img, tri_affines, dest_points, delaunay)
 
   return result_img
 
@@ -104,40 +106,45 @@ def save_mask(base_img, base_points):
   mask = cv2.erode(mask, kernel)
 
   cv2.imwrite('mask.jpg', mask)
-  #print 'mask saved'
+  print 'mask saved'
   return mask
 
-
 def main():
-  #Load source image
+  # Load source image
   face_points_func = partial(locator.face_points, '../data')
   base_path = '../base/female_average.jpg'
-  src_path = '../females/long-face.jpg'
-  src = scipy.ndimage.imread(src_path)
-  
-  #Define control points for warps
+  src_path = '../females/BlDmB5QCYAAY8iw.jpg'
+  src_img = scipy.ndimage.imread(src_path)
+
+  # Define control points for warps
   src_points = face_points_func(src_path)
   base_img = scipy.ndimage.imread(base_path)
   base_points = face_points_func(base_path)
 
-  #Perform transform
-  dst_img = warp_image(src, src_points, base_img, base_points)
-  ave = cv2.addWeighted(base_img, 0.5, dst_img, 0.5, 0)
+  result_points = locator.weighted_average_points(src_points, base_points, 0.2)
 
-  import blender
-  blended_img = blender.alpha_feathering(dst_img, base_img, base_points)
+  # Perform transform
+  dst_img = warp_image(src_img, src_points, result_points, (400,400))
+  #ave = cv2.addWeighted(base_img, 0.5, dst_img, 0.5, 0)
 
-  save_mask(base_img, base_points)
-  scipy.misc.imsave('dest.jpg', dst_img)
-  scipy.misc.imsave('dest2.jpg', ave)
+  #import blender
+  #mask = blender.mask_from_points(base_img, result_points)
+  #blended_img = blender.poission_blend(base_img, dst_img, mask)
+
+  #save_mask(base_img, base_points)
+  #scipy.misc.imsave('dest.jpg', dst_img)
+  #scipy.misc.imsave('dest2.jpg', ave)
   plt.subplot(2,2,1)
   plt.imshow(base_img)
+  plot_mesh(base_points, spatial.Delaunay(base_points))
   plt.subplot(2,2,2)
   plt.imshow(dst_img)
   plt.subplot(2,2,3)
-  plt.imshow(ave)
+  plt.imshow(src_img)
+  plot_mesh(src_points, spatial.Delaunay(src_points))
   plt.subplot(2,2,4)
-  plt.imshow(blended_img)
+  
+  #plt.imshow(blended_img)
   plt.show()
 
   #cv2.waitKey(0)
