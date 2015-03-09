@@ -15,6 +15,7 @@
 """
 from docopt import docopt
 import os
+import locator
 import morpher
 #import warp_affine
 import scipy.ndimage
@@ -37,10 +38,10 @@ def sharpen(img):
 
 def main():
   args = docopt(__doc__, version='Morpher 1.0')
-  imgpaths = list(list_imgpaths(args['--images'])) #list(list_imgpaths('males')) #+ list(list_imgpaths('females'))
+  imgpaths = list(list_imgpaths(args['--images']))
   #shuffle(imgpaths)
 
-  face_points_func = partial(morpher.face_points, args['--data'])
+  face_points_func = partial(locator.face_points, args['--data'])
   percent = 1 / (len(imgpaths) + 1.0)
   basepath = '../base/female_average.jpg'
   dst_img = scipy.ndimage.imread(basepath)
@@ -66,7 +67,6 @@ def main():
 
   dst_img = sharpen(dst_img)
 
-  #cv::addWeighted(frame, 1.5, image, -0.5, 0, image);)
   print 'Processed {0} face. {1} failed.'.format(passed, failed)
   plt.axis('off')
   plt.imshow(dst_img)
