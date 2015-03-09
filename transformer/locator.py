@@ -9,7 +9,7 @@ import subprocess
 def boundary_points(points):
   """ Produce additional boundary points
 
-  :param points: _n_ x 2 array of x,y points
+  :param points: _m_ x 2 array of x,y points
   :returns: 2 additional points at the top corners
   """
   x, y, w, h = cv2.boundingRect(np.array([points], np.int32))
