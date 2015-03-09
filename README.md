@@ -2,8 +2,8 @@
 
 ## To run:
 
-    python mass_morpher.py --data=data --images=<images_folder>
-
+    cd transformer/
+    python mass_morpher.py --data=../data --images=<images_folder> [--blend]
 
 ## Help
 
