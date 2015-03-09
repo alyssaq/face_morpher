@@ -19,7 +19,6 @@ def boundary_points(points):
   return [[x+spacerw, y+spacerh],
           [x+w-spacerw, y+spacerh]]
 
-
 def face_points(classifier_folder, imgpath, add_boundary_points=True):
   """ Locates 77 face points using stasm (http://www.milbo.users.sonic.net/stasm)
 
