@@ -1,13 +1,6 @@
+import cv2
 import numpy as np
 import scipy.spatial as spatial
-import cv2
-import scipy.ndimage
-import scipy.misc
-from matplotlib import pyplot as plt
-from functools import partial
-import scipy.ndimage.measurements
-import locator
-import aligner
 
 def bilinear_interpolate(img, coords):
   """ Interpolates over every image channel
@@ -98,25 +91,20 @@ def warp_image(src_img, src_points, dest_points, dest_shape):
 
   return result_img
 
-def save_mask(base_img, base_points):
-  radius = 15  # kernel size
-  kernel = np.ones((radius, radius), np.uint8)
-
-  mask = np.zeros(base_img.shape[:2], np.uint8)
-  cv2.fillConvexPoly(mask, cv2.convexHull(base_points), 255)
-  mask = cv2.erode(mask, kernel)
-
-  cv2.imwrite('mask.jpg', mask)
-  print 'mask saved'
-  return mask
-
 def main():
+  from functools import partial
+  import scipy.ndimage
+  import scipy.misc
+  import locator
+  import aligner
+  from matplotlib import pyplot as plt
+
   # Load source image
   face_points_func = partial(locator.face_points, '../data')
   base_path = '../females/Screenshot 2015-03-04 17.11.12.png'
   src_path = '../females/BlDmB5QCYAAY8iw.jpg'
   src_img = scipy.ndimage.imread(src_path)[:, :, :3]
-  scale_mat = np.float32([[2, 0, 0], [1, 0, 0]])
+
   # Define control points for warps
   src_points = face_points_func(src_path)
   base_img = scipy.ndimage.imread(base_path)[:, :, :3]
@@ -129,23 +117,21 @@ def main():
 
   # Perform transform
   #dst_img = warp_image(src_img, src_points, result_points, (400,400))
-  dst_img = warp_image(src_img, src_points, base_points, base_img.shape[:2])
+  dst_img1 = warp_image(src_img, src_points, result_points, size)
+  dst_img2 = warp_image(base_img, base_points, result_points, size)
+  
   print 'blending'
   import blender
-  ave = cv2.addWeighted(dst_img, 0.6, base_img, 0.4, 0)
-  mask = blender.mask_from_points(base_img, base_points)
-  blended_img = blender.alpha_feathering(base_img, dst_img, mask)
-  
-  #save_mask(base_img, base_points)
-  #scipy.misc.imsave('dest.jpg', dst_img)
-  #scipy.misc.imsave('dest2.jpg', ave)
+  ave = blender.weighted_average(dst_img1, dst_img2, 0.6)
+  mask = blender.mask_from_points(size, result_points)
+  blended_img = blender.poisson_blend(dst_img1, dst_img2, mask)
 
   plt.subplot(2,2,1)
   plt.imshow(ave)
   plt.subplot(2,2,2)
-  plt.imshow(dst_img)
+  plt.imshow(dst_img1)
   plt.subplot(2,2,3)
-  plt.imshow(src_img)
+  plt.imshow(dst_img2)
   plt.subplot(2,2,4)
   
   plt.imshow(blended_img)

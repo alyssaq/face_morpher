@@ -17,8 +17,7 @@
 from docopt import docopt
 import os
 import locator
-import morpher
-#import warp_affine
+import warper
 import scipy.ndimage
 from matplotlib import pyplot as plt
 import cv2
@@ -62,16 +61,17 @@ def main():
       failed += 1
       continue
 
-    result_img = morpher.warp_image(src_img, src_points, base_img, base_points)
+    result_img = warper.warp_image(src_img, src_points, base_points, base_img.shape[:2])
     #dst_img = cv2.addWeighted(dst_img, 0.6, result_img, 0.4, 0)
     dst_img += np.asarray(result_img * percent, np.uint8)
     passed += 1
 
+  blended_img = dst_img
   if args['--blend']:
     dst_img = sharpen(dst_img)
     import blender
-    mask = blender.mask_from_points(base_img, base_points)
-    blended_img = blender.poission_blend(base_img, dst_img, mask)
+    mask = blender.mask_from_points(base_img.shape[:2], base_points)
+    blended_img = blender.alpha_feathering(base_img, dst_img, mask)
 
   print 'Processed {0} face. {1} failed.'.format(passed, failed)
   plt.axis('off')
