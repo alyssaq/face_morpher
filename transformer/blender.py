@@ -15,7 +15,7 @@ def mask_from_points(size, points):
 def weighted_average(img1, img2, percent=0.5):
   return cv2.addWeighted(img1, percent, img2, 1-percent, 0)
 
-def alpha_feathering(dest_img, src_img, img_mask, blur_radius=15):
+def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
   mask = cv2.blur(img_mask, (blur_radius, blur_radius))
   mask = mask / 255.0
 
@@ -25,7 +25,8 @@ def alpha_feathering(dest_img, src_img, img_mask, blur_radius=15):
 
   return result_img
 
-def poisson_blend(img_target, img_source, img_mask, offset=(0, 0)):
+def poisson_blend(img_source, dest_img, img_mask, offset=(0, 0)):
+  img_target = np.copy(dest_img)
   import pyamg
   # compute regions to be blended
   region_source = (
