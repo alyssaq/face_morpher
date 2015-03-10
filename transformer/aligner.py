@@ -40,7 +40,7 @@ def resize_align(img, points, size):
   """ Resize image and associated points and align to the new supplied size
 
   :param img: image to be resized
-  :param points: _m_ x 2 array of points
+  :param points: *m* x 2 array of points
   :param size: (h, w) tuple of new size
   """
   # Resize image based on bounding rectangle
