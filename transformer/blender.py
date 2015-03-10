@@ -2,15 +2,18 @@ import cv2
 import numpy as np
 import scipy.sparse
 
-def mask_from_points(img, points):
+def mask_from_points(size, points):
   radius = 15  # kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
-  mask = np.zeros(img.shape[:2], np.uint8)
+  mask = np.zeros(size, np.uint8)
   cv2.fillConvexPoly(mask, cv2.convexHull(points), 255)
   mask = cv2.erode(mask, kernel)
 
   return mask
+
+def weighted_average(img1, img2, percent=0.5):
+  return cv2.addWeighted(img1, percent, img2, 1-percent, 0)
 
 def alpha_feathering(dest_img, src_img, img_mask, blur_radius=15):
   mask = cv2.blur(img_mask, (blur_radius, blur_radius))
