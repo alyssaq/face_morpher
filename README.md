@@ -2,7 +2,7 @@
 
 Warp, average and morph human faces!
 
-## Steps
+## Steps (transformer folder)
 
 #### 1. Locator
 
