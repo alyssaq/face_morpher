@@ -1,5 +1,5 @@
 """
-  Align face and image sizes
+Align face and image sizes
 """
 
 import cv2
