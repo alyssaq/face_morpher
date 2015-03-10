@@ -12,20 +12,13 @@ def mask_from_points(img, points):
 
   return mask
 
-def alpha_feathering(dest_img, base_img, base_points):
-  radius = 15  # kernel size
-  kernel = np.ones((radius, radius), np.uint8)
-
-  mask = np.zeros(base_img.shape[:2], np.uint8)
-  cv2.fillConvexPoly(mask, cv2.convexHull(base_points), 255)
-  mask = cv2.erode(mask, kernel)
-
-  mask = cv2.blur(mask, (radius, radius))
+def alpha_feathering(dest_img, src_img, img_mask, blur_radius=15):
+  mask = cv2.blur(img_mask, (blur_radius, blur_radius))
   mask = mask / 255.0
 
-  result_img = np.empty(base_img.shape, np.uint8)
+  result_img = np.empty(src_img.shape, np.uint8)
   for i in xrange(3):
-    result_img[..., i] = dest_img[..., i] * mask + base_img[..., i] * (1-mask)
+    result_img[..., i] = dest_img[..., i] * mask + src_img[..., i] * (1-mask)
 
   return result_img
 
