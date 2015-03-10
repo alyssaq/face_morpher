@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from functools import partial
 import scipy.ndimage.measurements
 import locator
+import aligner
 
 def bilinear_interpolate(img, coords):
   """ Interpolates over every image channel
@@ -112,39 +113,42 @@ def save_mask(base_img, base_points):
 def main():
   # Load source image
   face_points_func = partial(locator.face_points, '../data')
-  base_path = '../base/female_average.jpg'
+  base_path = '../females/Screenshot 2015-03-04 17.11.12.png'
   src_path = '../females/BlDmB5QCYAAY8iw.jpg'
-  src_img = scipy.ndimage.imread(src_path)
-
+  src_img = scipy.ndimage.imread(src_path)[:, :, :3]
+  scale_mat = np.float32([[2, 0, 0], [1, 0, 0]])
   # Define control points for warps
   src_points = face_points_func(src_path)
-  base_img = scipy.ndimage.imread(base_path)
+  base_img = scipy.ndimage.imread(base_path)[:, :, :3]
   base_points = face_points_func(base_path)
 
+  size = (600, 500)
+  src_img, src_points = aligner.resize_align(src_img, src_points, size)
+  base_img, base_points = aligner.resize_align(base_img, base_points, size)
   result_points = locator.weighted_average_points(src_points, base_points, 0.2)
 
   # Perform transform
-  dst_img = warp_image(src_img, src_points, result_points, (400,400))
-  #ave = cv2.addWeighted(base_img, 0.5, dst_img, 0.5, 0)
-
-  #import blender
-  #mask = blender.mask_from_points(base_img, result_points)
-  #blended_img = blender.poission_blend(base_img, dst_img, mask)
-
+  #dst_img = warp_image(src_img, src_points, result_points, (400,400))
+  dst_img = warp_image(src_img, src_points, base_points, base_img.shape[:2])
+  print 'blending'
+  import blender
+  ave = cv2.addWeighted(dst_img, 0.6, base_img, 0.4, 0)
+  mask = blender.mask_from_points(base_img, base_points)
+  blended_img = blender.alpha_feathering(base_img, dst_img, mask)
+  
   #save_mask(base_img, base_points)
   #scipy.misc.imsave('dest.jpg', dst_img)
   #scipy.misc.imsave('dest2.jpg', ave)
+
   plt.subplot(2,2,1)
-  plt.imshow(base_img)
-  plot_mesh(base_points, spatial.Delaunay(base_points))
+  plt.imshow(ave)
   plt.subplot(2,2,2)
   plt.imshow(dst_img)
   plt.subplot(2,2,3)
   plt.imshow(src_img)
-  plot_mesh(src_points, spatial.Delaunay(src_points))
   plt.subplot(2,2,4)
   
-  #plt.imshow(blended_img)
+  plt.imshow(blended_img)
   plt.show()
 
   #cv2.waitKey(0)
