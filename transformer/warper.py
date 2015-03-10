@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 import scipy.spatial as spatial
 
@@ -116,31 +115,25 @@ def main():
   result_points = locator.weighted_average_points(src_points, base_points, 0.2)
 
   # Perform transform
-  #dst_img = warp_image(src_img, src_points, result_points, (400,400))
   dst_img1 = warp_image(src_img, src_points, result_points, size)
   dst_img2 = warp_image(base_img, base_points, result_points, size)
-  
+
   print 'blending'
   import blender
   ave = blender.weighted_average(dst_img1, dst_img2, 0.6)
   mask = blender.mask_from_points(size, result_points)
   blended_img = blender.poisson_blend(dst_img1, dst_img2, mask)
 
-  plt.subplot(2,2,1)
+  plt.subplot(2, 2, 1)
   plt.imshow(ave)
-  plt.subplot(2,2,2)
+  plt.subplot(2, 2, 2)
   plt.imshow(dst_img1)
-  plt.subplot(2,2,3)
+  plt.subplot(2, 2, 3)
   plt.imshow(dst_img2)
-  plt.subplot(2,2,4)
-  
+  plt.subplot(2, 2, 4)
+
   plt.imshow(blended_img)
   plt.show()
 
-  #cv2.waitKey(0)
-  #cv2.destroyAllWindows()
-
 if __name__ == "__main__":
   main()
-
-  
