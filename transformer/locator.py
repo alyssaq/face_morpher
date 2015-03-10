@@ -25,7 +25,7 @@ def face_points(classifier_folder, imgpath, add_boundary_points=True):
   :param classifier_folder: path to folder containing the .xml classifier data
   :param imgpath: an image path to extract the 77 face points
   :param add_boundary_points: bool to add 2 additional points
-  :returns: Array of x,y face points
+  :returns: Array of x,y face points. Empty array if no face found
   """
   command = './bin/stasm_util -f "{0}" "{1}"'.format(classifier_folder, imgpath)
   s = subprocess.check_output(command, shell=True)
