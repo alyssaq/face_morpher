@@ -5,6 +5,7 @@ Locate face points
 import cv2
 import numpy as np
 import subprocess
+import os.path as path
 
 def boundary_points(points):
   """ Produce additional boundary points
@@ -27,7 +28,11 @@ def face_points(classifier_folder, imgpath, add_boundary_points=True):
   :param add_boundary_points: bool to add 2 additional points
   :returns: Array of x,y face points. Empty array if no face found
   """
-  command = './bin/stasm_util -f "{0}" "{1}"'.format(classifier_folder, imgpath)
+  stasm_path = path.join(
+    path.dirname(path.realpath(__file__)),
+    'bin/stasm_util')
+  command = '"{0}" -f "{1}" "{2}"'.format(
+    stasm_path, classifier_folder, imgpath)
   s = subprocess.check_output(command, shell=True)
   if s.startswith('No face found'):
     return []
