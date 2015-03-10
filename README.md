@@ -19,7 +19,7 @@
 
 #### 4. Morpher
   
-  * Morpher a collection of images
+  * Morph a collection of images
 
 #### Blender
 
