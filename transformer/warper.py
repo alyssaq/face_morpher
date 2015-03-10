@@ -90,7 +90,7 @@ def warp_image(src_img, src_points, dest_points, dest_shape):
 
   return result_img
 
-def main():
+def test_local():
   from functools import partial
   import scipy.ndimage
   import scipy.misc
@@ -136,4 +136,4 @@ def main():
   plt.show()
 
 if __name__ == "__main__":
-  main()
+  test_local()
