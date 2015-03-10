@@ -8,15 +8,15 @@
 
   Options:
     -h, --help             Show this screen.
-    --blend                Boolean flag to blend images after averaging
+    --blend                Flag to blend images after averaging (default: False)
     --version              Show version.
-    --data=<folder>        Folder to .xmls for classifiers (default: ../data)
+    --data=<folder>        Folder to .xmls for classifiers (default: data)
     --src=<src_imgpath>    Filepath to source image (.jpg, .jpeg, .png)
     --dest=<dest_path>     Filepath to destination image (.jpg, .jpeg, .png)
 """
+
 from docopt import docopt
 import numpy as np
-import scipy.misc
 from matplotlib import pyplot as plt
 
 def plot_one(row, col, img, i):
@@ -65,11 +65,14 @@ def plot_morph(data_folder, src_path, dest_path, do_blend=False):
     ave = blender.weighted_average(src_face, end_face, percent)
     i = plotter(ave, i)
 
-  print 'blending'
-  blended_img = blender.poisson_blend(src_face, dest_img, mask)
   i = plotter(end_face, i)
   i = plotter(dest_img, i)
-  i = plotter(blended_img, i)
+
+  if do_blend:
+    print 'blending'
+    blended_img = blender.poisson_blend(src_face, dest_img, mask)
+    i = plotter(blended_img, i)
+
   plt.gcf().subplots_adjust(hspace=0.05, wspace=0,
                             left=0, bottom=0, right=1, top=0.98)
   plt.axis('off')
@@ -78,6 +81,6 @@ def plot_morph(data_folder, src_path, dest_path, do_blend=False):
 if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
   if args['--data'] is None:
-    args['--data'] = '../data'
+    args['--data'] = 'data'
   plot_morph(args['--data'], args['--src'], args['--dest'], args['--blend'])
   #plot_morph('../data', '../family/IMG_20140515_203547.jpg', '../john_malkovich.jpg', True)

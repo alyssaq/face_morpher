@@ -21,7 +21,7 @@ Warp, average and morph human faces!
 
 #### 4. Morpher
   
-  * Morph a collection of images
+  * Morph between 2 images
 
 #### Blender
 
@@ -30,9 +30,13 @@ Warp, average and morph human faces!
   * Alpha feathering
   * Poisson blend
 
-## To run:
+## To morph between 2 images:
+Must supply path to source and destination image. Optional blend of the 2 images
 
-    cd transformer/
+    python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath> [--blend]
+
+## To average all images in a folder:
+
     python mass_morpher.py --data=../data --images=<images_folder> [--blend]
 
 ## Help
