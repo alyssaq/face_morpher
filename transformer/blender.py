@@ -26,6 +26,7 @@ def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
   return result_img
 
 def poisson_blend(img_source, dest_img, img_mask, offset=(0, 0)):
+  # http://opencv.jp/opencv2-x-samples/poisson-blending
   img_target = np.copy(dest_img)
   import pyamg
   # compute regions to be blended
