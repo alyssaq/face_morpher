@@ -18,11 +18,11 @@ def alpha_feathering(dest_img, src_img, img_mask, blur_radius=15):
 
   result_img = np.empty(src_img.shape, np.uint8)
   for i in xrange(3):
-    result_img[..., i] = dest_img[..., i] * mask + src_img[..., i] * (1-mask)
+    result_img[..., i] = src_img[..., i] * mask + dest_img[..., i] * (1-mask)
 
   return result_img
 
-def poission_blend(img_target, img_source, img_mask, offset=(0, 0)):
+def poisson_blend(img_target, img_source, img_mask, offset=(0, 0)):
   import pyamg
   # compute regions to be blended
   region_source = (
