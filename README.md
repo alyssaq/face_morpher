@@ -37,7 +37,7 @@ Must supply path to source and destination image. Optional blend of the 2 images
 
 ## To average all images in a folder:
 
-    python mass_morpher.py --data=../data --images=<images_folder> [--blend]
+    python mass_morpher.py --images=<images_folder> [--blend]
 
 ## Help
 

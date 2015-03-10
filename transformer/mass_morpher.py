@@ -4,7 +4,7 @@
   Mass face morpher
 
   Usage:
-    mass_morpher.py --data=<classifiers_folder> --images=<images_folder> [--blend]
+    mass_morpher.py --images=<images_folder> [--blend] [--data=<classifiers_folder>] 
 
   Options:
     -h, --help         Show this screen.
@@ -24,7 +24,7 @@ import cv2
 import numpy as np
 from random import shuffle
 from functools import partial
-  
+
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):
     if (fname.lower().endswith('.jpg') or
@@ -41,6 +41,8 @@ def main():
   imgpaths = list(list_imgpaths(args['--images']))
   #shuffle(imgpaths)
 
+  if args['--data'] is None:
+    args['--data'] = 'data'
   face_points_func = partial(locator.face_points, args['--data'])
   percent = 1 / (len(imgpaths) + 1.0)
   print percent
