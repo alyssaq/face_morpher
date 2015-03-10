@@ -1,5 +1,7 @@
 # Face Morpher
 
+Warp, average and morph human faces!
+
 ## Steps
 
 #### 1. Locator
