@@ -17,8 +17,9 @@ def check_do_plot(func):
       mpimg.imsave(filename, args[0])
       print filename
     if self.do_plot:
-      return func(self, *args, **kwargs)
+      func(self, *args, **kwargs)
     self.counter += 1
+
   return inner
 
 class Plotter(object):

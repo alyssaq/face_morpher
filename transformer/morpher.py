@@ -18,8 +18,8 @@
     --height=<height>       Custom height of the images/video [default: 600]
     --num=<num_frames>      Number of morph frames [default: 20]
     --fps=<fps>             Number frames per second for the video [default: 10]
-    --out_frames=<folder>   Folder path to save all image frames [default: None]
-    --out_video=<filename>  Filename to save a video [default: None]
+    --out_frames=<folder>   Folder path to save all image frames
+    --out_video=<filename>  Filename to save a video
     --plot                  Flag to plot images [default: False]
     --blend                 Flag to blend images [default: False]
     --data=<folder>         Folder to .xmls for classifiers [default: data]
