@@ -70,6 +70,7 @@ Options:
 `--out_video=out.avi`
 
 (out.avi played and recorded as gif)
+
 ![gif](examples/being_john_malvokich.gif)
 
 To save the frames to a folder:    
