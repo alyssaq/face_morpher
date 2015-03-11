@@ -24,6 +24,7 @@ class Plotter(object):
     self.set_filepath(folder)
 
     if (rows + cols) == 0 and num_images > 0:
+      # Auto-calculate the number of rows and cols for the figure
       self.rows = np.ceil(np.sqrt(num_images / 2.0))
       self.cols = np.ceil(num_images / self.rows)
     else:
