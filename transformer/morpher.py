@@ -31,42 +31,42 @@ import blender
 import plotter
 import videoer
 
-def plot_morph(data_folder, src_path, dest_path,
-               num_frames=20, blend=False, out_frames=None, out_video=None):
+def load_image_points(data_folder, path, size):
+  img = scipy.ndimage.imread(path)[..., :3]
+  points = locator.face_points(data_folder, path)
+
+  return aligner.resize_align(img, points, size)
+
+def morph(data_folder, src_path, dest_path,
+          num_frames=20, blend=False, out_frames=None, out_video=None):
 
   size = (600, 500)
-  video = videoer.Video(out_video, num_frames, (500,600))
+  video = videoer.Video(out_video, num_frames, (500, 600))
   num_frames += (1 if blend else 0)
-  plt = plotter.Plotter(True, num_images=num_frames)
+  plt = plotter.Plotter(True, num_images=num_frames, folder=out_frames)
   num_frames -= 2  # No need to plot/save src and dest image
 
-  # Load source image
-  face_points_func = partial(locator.face_points, data_folder)
-  src_img = scipy.ndimage.imread(src_path)[..., :3]
-  src_points = face_points_func(src_path)
-  dest_img = scipy.ndimage.imread(dest_path)[..., :3]
-  dest_points = face_points_func(dest_path)
-
-  src_img, src_points = aligner.resize_align(src_img, src_points, size)
-  dest_img, dest_points = aligner.resize_align(dest_img, dest_points, size)
-  mask = blender.mask_from_points(size, dest_points)
+  loader = partial(load_image_points, data_folder, size=size)
+  src_img, src_points = loader(src_path)
+  dest_img, dest_points = loader(dest_path)
 
   plt.plot_one(src_img)
   video.write(src_img)
+
   for percent in np.linspace(1, 0, num=num_frames):
     points = locator.weighted_average_points(src_points, dest_points, percent)
-    src_face = warper.warp_image(
-      src_img, src_points, points, dest_img.shape[:2])
-    end_face = warper.warp_image(
-      dest_img, dest_points, points, dest_img.shape[:2])
+    src_face = warper.warp_image(src_img, src_points, points, size)
+    end_face = warper.warp_image(dest_img, dest_points, points, size)
     average_face = blender.weighted_average(src_face, end_face, percent)
     plt.plot_one(average_face, 'save')
     video.write(average_face)
+
   plt.plot_one(dest_img)
   video.write(dest_img)
 
   if blend:
     print 'blending'
+    mask = blender.mask_from_points(size, dest_points)
     blended_img = blender.poisson_blend(src_face, dest_img, mask)
     plt.plot_one(blended_img)
 
@@ -76,5 +76,6 @@ if __name__ == "__main__":
   # args = docopt(__doc__, version='2 Image Morpher 1.0')
   # if args['--data'] is None:
   #   args['--data'] = 'data'
-  # plot_morph(args['--data'], args['--src'], args['--dest'], args['--blend'])
-  plot_morph('../data', '../family/IMG_20140515_203547.jpg', '../john_malkovich.jpg', 4, False)
+  # morph(args['--data'], args['--src'], args['--dest'], args['--blend'])
+  morph('../data', '../family/IMG_20140515_203547.jpg', 
+    '../john_malkovich.jpg', 4, False,out_video='output.avi')
