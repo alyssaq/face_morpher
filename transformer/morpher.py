@@ -38,7 +38,7 @@ def load_image_points(data_folder, path, size):
   return aligner.resize_align(img, points, size)
 
 def morph(data_folder, src_path, dest_path,
-          num_frames=20, blend=False, out_frames=None, out_video=None):
+          num_frames=20, out_frames=None, out_video=None, blend=False):
 
   size = (600, 500)
   video = videoer.Video(out_video, num_frames, (500, 600))
@@ -78,4 +78,4 @@ if __name__ == "__main__":
   #   args['--data'] = 'data'
   # morph(args['--data'], args['--src'], args['--dest'], args['--blend'])
   morph('../data', '../family/IMG_20140515_203547.jpg', 
-    '../john_malkovich.jpg', 4, False,out_video='output.avi')
+    '../john_malkovich.jpg', 4, out_frames='test',out_video='output.avi')

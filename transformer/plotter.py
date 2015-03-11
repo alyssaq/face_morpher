@@ -1,11 +1,16 @@
+"""
+Plot and save images
+"""
+
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
+import os.path
 
 def check_do_plot(func):
   def inner(self, *args, **kwargs):
-    if 'save' in args:
-      mpimg.imsave('frame{0}.png'.format(self.counter[0]-1), args[0])
+    if 'save' in args and self.filepath is not None:
+      mpimg.imsave(self.filepath.format(self.counter[0] - 1), args[0])
     if self.do_plot:
       return func(self, *args, **kwargs)
     else:
@@ -16,7 +21,8 @@ class Plotter(object):
   def __init__(self, plot=True, rows=0, cols=0, num_images=0, folder=None):
     self.counter = [1]
     self.do_plot = plot
-    self.folder = folder
+    self.set_filepath(folder)
+
     if (rows + cols) == 0 and num_images > 0:
       self.rows = np.ceil(np.sqrt(num_images / 2.0))
       self.cols = np.ceil(num_images / self.rows)
@@ -24,8 +30,17 @@ class Plotter(object):
       self.rows = rows
       self.cols = cols
 
+  def set_filepath(self, folder):
+    if folder is None:
+      self.filepath = None
+      return
+
+    if not os.path.exists(folder):
+      os.makedirs(folder)
+    self.filepath = os.path.join(folder, 'frame{0}.png')
+
   @check_do_plot
-  def plot_one(self, img, save=False, folder='.'):
+  def plot_one(self, img, save=False):
     p = plt.subplot(self.rows, self.cols, self.counter[0])
     p.axes.get_xaxis().set_visible(False)
     p.axes.get_yaxis().set_visible(False)
