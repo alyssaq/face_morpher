@@ -32,7 +32,7 @@ def plot_morph(data_folder, src_path, dest_path, num_frames=20, do_blend=False):
   rows = np.ceil(np.sqrt(num_frames / 2.0))
   cols = np.ceil(num_frames / rows)
   plt = plotter.Plotter(True)
-  plot_one = plt.plot_one(rows, cols)
+  plot_one = partial(plt.plot_one, rows, cols)
   half_frames = num_frames / 2
 
   # Load source image
