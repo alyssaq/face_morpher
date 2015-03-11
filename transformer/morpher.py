@@ -4,12 +4,15 @@
   Morph from source to destination face
 
   Usage:
-    morpher.py --src=<src_path> --dest=<dest_path> [--data=<classifiers_folder>] [--blend]
+    morpher.py --src=<src_path> --dest=<dest_path> --num=<num_frames>
+              [--blend] [--out=<frames_folder>] [--data=<classifiers_folder>]
 
   Options:
     -h, --help             Show this screen.
     --src=<src_imgpath>    Filepath to source image (.jpg, .jpeg, .png)
     --dest=<dest_path>     Filepath to destination image (.jpg, .jpeg, .png)
+    --num=<num_frames>     Number of frames to produce morph transition
+    --out=<frames_folder>  Folder path to save all image frames
     --blend                Flag to blend images after averaging (default: False)
     --data=<folder>        Folder to .xmls for classifiers (default: data)
     --version              Show version.
@@ -21,7 +24,8 @@ import numpy as np
 from functools import partial
 import plotter
 
-def plot_morph(data_folder, src_path, dest_path, num_frames=20, blend=False):
+def plot_morph(data_folder, src_path, dest_path,
+               num_frames=20, blend=False, out_folder=None):
   import scipy.misc
   import locator
   import aligner
