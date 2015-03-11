@@ -39,8 +39,6 @@ All options listed in `morpher.py` (pasted below):
 ```
 Morph from source to destination face
 
-Morph from source to destination face
-
 Usage:
   morpher.py --src=<src_path> --dest=<dest_path>
             [--width=<width>] [--height=<height>]
