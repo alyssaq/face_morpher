@@ -31,10 +31,35 @@ Warp, average and morph human faces!
   * Poisson blend
 
 ## To morph between 2 images:
-Must supply path to source and destination image. Optional blend of the 2 images
+Must supply path to source and destination image.
 
-    python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath> [--blend]
+    python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
 
+All options listed in `morpher.py` (pasted below):
+```
+Morph from source to destination face
+
+Usage:
+  morpher.py --src=<src_path> --dest=<dest_path>
+            [--width=<width>] [--height=<height>]
+            [--num=<num_frames>] [--blend] [--plot]
+            [--out_frames=<folder>] [--out_video=<filename>]
+            [--data=<classifiers_folder>]
+
+Options:
+  -h, --help              Show this screen.
+  --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
+  --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
+  --width=<width>         Custom width of the images/video (default: 500px)
+  --height=<height>       Custom height of the images/video (default: 600px)
+  --num=<num_frames>      Number of morph frames (default: 20)
+  --out_frames=<folder>   Folder path to save all image frames (default: None)
+  --out_video=<filename>  Filename to save a video (default: None)
+  --plot                  Flag to plot images (default: False)
+  --blend                 Flag to blend images (default: False)
+  --data=<folder>         Folder to .xmls for classifiers (default: data)
+  --version               Show version.
+```
 ## To average all images in a folder:
 
     python mass_morpher.py --images=<images_folder> [--blend]

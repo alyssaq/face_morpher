@@ -5,8 +5,8 @@
 
   Usage:
     morpher.py --src=<src_path> --dest=<dest_path>
-               --width=<width> --height=<height>
-              [--num=<num_frames>] [--blend]
+              [--width=<width>] [--height=<height>]
+              [--num=<num_frames>] [--blend] [--plot]
               [--out_frames=<folder>] [--out_video=<filename>]
               [--data=<classifiers_folder>]
 
@@ -14,9 +14,12 @@
     -h, --help              Show this screen.
     --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
     --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
+    --width=<width>         Custom width of the images/video (default: 500px)
+    --height=<height>       Custom height of the images/video (default: 600px)
     --num=<num_frames>      Number of morph frames (default: 20)
-    --out_frames=<folder>   Folder path to save all image frames
-    --out_video=<filename>  Filename to save a video (e.g. output.avi)
+    --out_frames=<folder>   Folder path to save all image frames (default: None)
+    --out_video=<filename>  Filename to save a video (default: None)
+    --plot                  Flag to plot images (default: False)
     --blend                 Flag to blend images (default: False)
     --data=<folder>         Folder to .xmls for classifiers (default: data)
     --version               Show version.
@@ -40,12 +43,12 @@ def load_image_points(data_folder, path, size):
   return aligner.resize_align(img, points, size)
 
 def morph(data_folder, src_path, dest_path, num_frames=20,
-          width=500, height=600, out_frames=None, out_video=None, blend=False):
-
+          width=500, height=600, out_frames=None, out_video=None,
+          blend=False, plot=False):
   size = (height, width)
   video = videoer.Video(out_video, num_frames, width, height)
   num_frames += (1 if blend else 0)
-  plt = plotter.Plotter(True, num_images=num_frames, folder=out_frames)
+  plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
   num_frames -= 2  # No need to plot/save src and dest image
 
   loader = partial(load_image_points, data_folder, size=size)
@@ -55,6 +58,7 @@ def morph(data_folder, src_path, dest_path, num_frames=20,
   plt.plot_one(src_img)
   video.write(src_img)
 
+  # Produce morph frames!
   for percent in np.linspace(1, 0, num=num_frames):
     points = locator.weighted_average_points(src_points, dest_points, percent)
     src_face = warper.warp_image(src_img, src_points, points, size)
@@ -74,12 +78,15 @@ def morph(data_folder, src_path, dest_path, num_frames=20,
 
   plt.show()
 
+def test():
+  morph('../data', '../family/IMG_20140515_203547.jpg',
+        '../john_malkovich.jpg', 4, 600, 550, out_frames='test')
+
 if __name__ == "__main__":
-  # args = docopt(__doc__, version='2 Image Morpher 1.0')
-  # if args['--data'] is None:
-  #   args['--data'] = 'data'
-  # morph(args['--data'], args['--src'], args['--dest'], args['--blend'])
-  morph('../data', '../family/IMG_20140515_203547.jpg', 
-        '../john_malkovich.jpg', 4,
-         600, 550, 
-        out_frames='test',out_video='output.avi')
+  args = docopt(__doc__, version='2 Image Morpher 1.0')
+  if args['--data'] is None:
+    args['--data'] = 'data'
+
+  morph(args['--data'], args['--src'], args['--dest'], args['--num'],
+        args['--width'], args['--height'], args['--out_frames'],
+        args['--out_video'], args['--blend'], args['--plot'])
