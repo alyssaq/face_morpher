@@ -33,9 +33,10 @@ Options:
   --data=<folder>         Folder to .xmls for classifiers [default: data]
   --version               Show version.
 ```
-## To average all images in a folder:
 
-    python mass_morpher.py --images=<images_folder> [--blend]
+## To create an average face from all images in a folder:
+
+    python averager.py --images=<images_folder> [--blend]
 
 ## Steps (transformer folder)
 

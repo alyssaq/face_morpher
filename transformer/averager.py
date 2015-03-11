@@ -4,7 +4,7 @@
   Mass face morpher
 
   Usage:
-    mass_morpher.py --images=<images_folder> [--blend] [--data=<classifiers_folder>] 
+    averager.py --images=<images_folder> [--blend] [--data=<classifiers_folder>]
 
   Options:
     -h, --help         Show this screen.
@@ -46,7 +46,7 @@ def main():
   face_points_func = partial(locator.face_points, args['--data'])
   percent = 1 / (len(imgpaths) + 1.0)
   print percent
-  basepath = '../base/female_average.jpg'
+  basepath = imgpaths[5]
   dst_img = scipy.ndimage.imread(basepath)
   base_points = face_points_func(basepath)
   base_img = np.copy(dst_img)
