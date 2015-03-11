@@ -39,12 +39,14 @@ All options listed in `morpher.py` (pasted below):
 ```
 Morph from source to destination face
 
+Morph from source to destination face
+
 Usage:
   morpher.py --src=<src_path> --dest=<dest_path>
             [--width=<width>] [--height=<height>]
-            [--num=<num_frames>] [--blend] [--plot]
+            [--num=<num_frames>] [--fps=<frames_per_second>]
             [--out_frames=<folder>] [--out_video=<filename>]
-            [--data=<classifiers_folder>]
+            [--plot] [--blend] [--data=<classifiers_folder>]
 
 Options:
   -h, --help              Show this screen.
@@ -53,6 +55,7 @@ Options:
   --width=<width>         Custom width of the images/video [default: 500]
   --height=<height>       Custom height of the images/video [default: 600]
   --num=<num_frames>      Number of morph frames [default: 20]
+  --fps=<fps>             Number frames per second for the video [default: 10]
   --out_frames=<folder>   Folder path to save all image frames [default: None]
   --out_video=<filename>  Filename to save a video [default: None]
   --plot                  Flag to plot images [default: False]
