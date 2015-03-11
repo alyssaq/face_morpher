@@ -68,7 +68,7 @@ Options:
 
 ## Example: [Being John Malkovich](http://www.rottentomatoes.com/m/being_john_malkovich)
 ##### Create a morphing video between the 2 images:
-`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
+`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--out_video=out.avi`
 
 (out.avi played and recorded as gif)
@@ -76,11 +76,11 @@ Options:
 ![gif](examples/being_john_malvokich.gif)
 
 ##### Save the frames to a folder:    
-`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
+`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--out_frames=out_folder --num=30`
 
 ##### Plot the frames
-`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
+`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--num=12 --plot`
 
 ![plot](examples/plot.png)
