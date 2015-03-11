@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 def positive_cap(num):
-  """ Cap a number to ensure it is positive
+  """ Cap a number to ensure positivity
 
   :param num: positive or negative number
   :returns: (overflow, capped_number)
@@ -17,12 +17,13 @@ def positive_cap(num):
     return num, 0
 
 def roi_coordinates(rect, size, scale):
-  """ Align the rectangle into the center of the new size.
+  """ Align the rectangle into the center and return the top-left coordinates
+  within the new size. If rect is smaller, we add borders.
 
-  :param rect: x, y, w, h are the bounding rectangle of the face
+  :param rect: (x, y, w, h) bounding rectangle of the face
   :param size: new width, new height are the dimensions of the crop
   :param scale: scaling factor of the rectangle to be resized
-  :returns: 4 numbers. top left coordinates of the aligned ROI.
+  :returns: 4 numbers. Top-left coordinates of the aligned ROI.
     (x, y, border_x, border_y). All values are > 0.
   """
   rectx, recty, rectw, recth = rect
@@ -41,7 +42,7 @@ def resize_align(img, points, size):
 
   :param img: image to be resized
   :param points: *m* x 2 array of points
-  :param size: (h, w) tuple of new size
+  :param size: (height, width) tuple of new size
   """
   # Resize image based on bounding rectangle
   cur_height, cur_width = img.shape[:2]
