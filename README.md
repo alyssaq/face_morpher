@@ -36,7 +36,25 @@ Options:
 
 ## Average faces from all images in a folder:
 
-    python transformer/averager.py --images=<images_folder> [--blend]
+    python transformer/averager.py --images=<images_folder>
+
+All options listed in `averager.py` (pasted below):
+```
+Face averager
+
+Usage:
+  averager.py --images=<images_folder> [--blend] [--data=<classifiers_folder>]
+            [--width=<width>] [--height=<height>]
+
+Options:
+  -h, --help         Show this screen.
+  --images=<folder>  Folder to images (.jpg, .jpeg, .png)
+  --blend            Flag to blend images [default: False]
+  --width=<width>    Custom width of the images/video [default: 500]
+  --height=<height>  Custom height of the images/video [default: 600]
+  --data=<folder>    Folder to .xmls for classifiers [default: data]
+  --version          Show version.
+```
 
 ## Steps (transformer folder)
 
@@ -71,7 +89,7 @@ Optional blending of warped image:
   * Poisson blend
 
 ## Example: [Being John Malkovich](http://www.rottentomatoes.com/m/being_john_malkovich)
-##### Create a morphing video between the 2 images:
+#### Create a morphing video between the 2 images:
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--out_video=out.avi`
 
@@ -79,15 +97,22 @@ Optional blending of warped image:
 
 ![gif](examples/being_john_malvokich.gif)
 
-##### Save the frames to a folder:    
+#### Save the frames to a folder:    
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--out_frames=out_folder --num=30`
 
-##### Plot the frames
+#### Plot the frames
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--num=12 --plot`
 
 ![plot](examples/plot.png)
+
+#### Average all faces in an image folder
+85 images used
+
+`> python transformer/averager.py --images=images --width=220 --height=250`
+ 
+![average_faces](examples/average_faces.png)
 
 ## Documentation (requires sphinx)
 
