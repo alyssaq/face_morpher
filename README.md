@@ -70,11 +70,9 @@ Options:
 `--out_video=out.avi`
 
 (out.avi played and recorded as gif)
+![gif](examples/being_john_malvokich.gif)
 
-<img src="examples/being_john_malkovich.gif" style="display: block;margin: 0 auto;"/>
-
-
-To save the frames to a folder:
+To save the frames to a folder:    
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
 `--out_frames=out_folder --num=30`
 
