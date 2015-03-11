@@ -65,6 +65,19 @@ Options:
   * Alpha feathering
   * Poisson blend
 
+## Example: [Being John Malkovich](http://www.rottentomatoes.com/m/being_john_malkovich)
+`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
+`--out_video=out.avi`
+
+(out.avi played and recorded as gif)
+
+<img src="examples/being_john_malkovich.gif" style="display: block;margin: 0 auto;"/>
+
+
+To save the frames to a folder:
+`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
+`--out_frames=out_folder --num=30`
+
 ## Documentation (requires sphinx)
 
     ./make_docs.sh
