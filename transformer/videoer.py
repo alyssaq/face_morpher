@@ -5,13 +5,28 @@ Create a video with image frames
 import cv2
 import numpy as np
 
+def check_write_video(func):
+  def inner(self, *args, **kwargs):
+    if self.video:
+      return func(self, *args, **kwargs)
+    else:
+      pass
+  return inner
+
+
 class Video(object):
   def __init__(self, filename, num_frames, size):
     fourcc = cv2.cv.FOURCC('m', 'p', '4', 'v')
-    self.video = cv2.VideoWriter(filename, fourcc, num_frames, size, True)
+    self.filename = filename
     self.counter = 0
     self.num_frames = num_frames
 
+    if filename is None:
+      self.video = None
+    else:
+      self.video = cv2.VideoWriter(filename, fourcc, num_frames, size, True)
+
+  @check_write_video
   def write(self, img):
     frame = np.copy(img)
     if img.shape[2] == 3:
@@ -21,7 +36,9 @@ class Video(object):
     self.video.write(frame)
     self.counter += 1
     if self.counter == self.num_frames:
-      self.video.release()
+      self.end()
 
+  @check_write_video
   def end(self):
+    print self.filename, 'saved'
     self.video.release()
