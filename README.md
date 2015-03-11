@@ -2,7 +2,7 @@
 
 Warp, average and morph human faces!
 
-## To morph between 2 images:
+## Morph between 2 images:
 Must supply path to source and destination image.
 
     python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
@@ -34,9 +34,9 @@ Options:
   --version               Show version.
 ```
 
-## To create an average face from all images in a folder:
+## Average faces from all images in a folder:
 
-    python averager.py --images=<images_folder> [--blend]
+    python transformer/averager.py --images=<images_folder> [--blend]
 
 ## Steps (transformer folder)
 
@@ -55,13 +55,17 @@ Options:
   * Triangulates face points
   * Affine transforms each triangle with bilinear interpolation
 
-#### 4. Morpher
+#### 4a. Morpher
   
   * Morph between 2 images
 
-#### Blender
+#### 4b. Averager
 
-  * Optional blending of warped image:
+  * Average faces from 2 or more images
+
+#### Blender
+Optional blending of warped image:
+
   * Weighted average
   * Alpha feathering
   * Poisson blend
