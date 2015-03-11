@@ -88,7 +88,7 @@ Optional blending of warped image:
   * Alpha feathering
   * Poisson blend
 
-## Example: [Being John Malkovich](http://www.rottentomatoes.com/m/being_john_malkovich)
+## Examples - [Being John Malkovich](http://www.rottentomatoes.com/m/being_john_malkovich)
 #### Create a morphing video between the 2 images:
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--out_video=out.avi`
@@ -101,13 +101,13 @@ Optional blending of warped image:
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--out_frames=out_folder --num=30`
 
-#### Plot the frames
+#### Plot the frames:
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`    
 `--num=12 --plot`
 
 ![plot](examples/plot.png)
 
-#### Average all faces in an image folder
+#### Average all faces in an image folder:
 85 images used
 
 `> python transformer/averager.py --images=images --width=220 --height=250`
