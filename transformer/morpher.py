@@ -14,14 +14,14 @@
     -h, --help              Show this screen.
     --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
     --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
-    --width=<width>         Custom width of the images/video (default: 500px)
-    --height=<height>       Custom height of the images/video (default: 600px)
-    --num=<num_frames>      Number of morph frames (default: 20)
-    --out_frames=<folder>   Folder path to save all image frames (default: None)
-    --out_video=<filename>  Filename to save a video (default: None)
-    --plot                  Flag to plot images (default: False)
-    --blend                 Flag to blend images (default: False)
-    --data=<folder>         Folder to .xmls for classifiers (default: data)
+    --width=<width>         Custom width of the images/video [default: 500]
+    --height=<height>       Custom height of the images/video [default: 600]
+    --num=<num_frames>      Number of morph frames [default: 20]
+    --out_frames=<folder>   Folder path to save all image frames [default: None]
+    --out_video=<filename>  Filename to save a video [default: None]
+    --plot                  Flag to plot images [default: False]
+    --blend                 Flag to blend images [default: False]
+    --data=<folder>         Folder to .xmls for classifiers [default: data]
     --version               Show version.
 """
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
   if args['--data'] is None:
     args['--data'] = 'data'
-
-  morph(args['--data'], args['--src'], args['--dest'], args['--num'],
-        args['--width'], args['--height'], args['--out_frames'],
+  print args
+  morph(args['--data'], args['--src'], args['--dest'], int(args['--num']),
+        int(args['--width']), int(args['--height']), args['--out_frames'],
         args['--out_video'], args['--blend'], args['--plot'])
