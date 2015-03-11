@@ -1,35 +1,38 @@
 """
 ::
 
-  Mass face morpher
+  Face averager
 
   Usage:
     averager.py --images=<images_folder> [--blend] [--data=<classifiers_folder>]
+              [--width=<width>] [--height=<height>]
 
   Options:
     -h, --help         Show this screen.
-    --blend            Boolean flag to blend images after averaging
-    --version          Show version.
-    --data=<folder>    Folder to .xml data for classifiers
     --images=<folder>  Folder to images (.jpg, .jpeg, .png)
-
+    --blend            Flag to blend images [default: False]
+    --width=<width>    Custom width of the images/video [default: 500]
+    --height=<height>  Custom height of the images/video [default: 600]
+    --data=<folder>    Folder to .xmls for classifiers [default: data]
+    --version          Show version.
 """
 from docopt import docopt
 import os
-import locator
-import warper
-import scipy.ndimage
-from matplotlib import pyplot as plt
 import cv2
 import numpy as np
-from random import shuffle
+import scipy.ndimage
 from functools import partial
+from matplotlib import pyplot as plt
+import matplotlib.image as mpimg
+
+import locator
+import warper
 
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):
     if (fname.lower().endswith('.jpg') or
-        fname.lower().endswith('.png') or
-        fname.lower().endswith('.jpeg')):
+       fname.lower().endswith('.png') or
+       fname.lower().endswith('.jpeg')):
       yield os.path.join(imgfolder, fname)
 
 def sharpen(img):
@@ -39,20 +42,14 @@ def sharpen(img):
 def main():
   args = docopt(__doc__, version='Morpher 1.0')
   imgpaths = list(list_imgpaths(args['--images']))
-  #shuffle(imgpaths)
 
-  if args['--data'] is None:
-    args['--data'] = 'data'
   face_points_func = partial(locator.face_points, args['--data'])
-  percent = 1 / (len(imgpaths) + 1.0)
-  print percent
   basepath = imgpaths[5]
-  dst_img = scipy.ndimage.imread(basepath)
+  base_img = scipy.ndimage.imread(basepath)
   base_points = face_points_func(basepath)
-  base_img = np.copy(dst_img)
 
   passed = failed = 0
-  dst_img = np.asarray(dst_img * percent, np.uint8)
+  images = np.zeros(base_img.shape, np.float32)
   for i, path in enumerate(imgpaths):
     print i, path
 
@@ -63,22 +60,23 @@ def main():
       failed += 1
       continue
 
-    result_img = warper.warp_image(src_img, src_points, base_points, base_img.shape[:2])
-    #dst_img = cv2.addWeighted(dst_img, 0.6, result_img, 0.4, 0)
-    dst_img += np.asarray(result_img * percent, np.uint8)
+    images += warper.warp_image(src_img, src_points,
+                                base_points, base_img.shape[:2])
     passed += 1
 
-  blended_img = dst_img
+  result_image = np.uint8(images / passed)
+
   if args['--blend']:
-    dst_img = sharpen(dst_img)
+    result_image = sharpen(result_image)
     import blender
     mask = blender.mask_from_points(base_img.shape[:2], base_points)
-    blended_img = blender.alpha_feathering(base_img, dst_img, mask)
+    result_image = blender.alpha_feathering(base_img, result_image, mask)
 
   print 'Processed {0} face. {1} failed.'.format(passed, failed)
   plt.axis('off')
-  plt.imshow(blended_img)
+  plt.imshow(result_image)
   plt.show()
+  mpimg.imsave('result.png', result_image)
 
 if __name__ == "__main__":
   main()

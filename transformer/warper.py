@@ -80,7 +80,7 @@ def warp_image(src_img, src_points, dest_points, dest_shape):
   src_img = src_img[:, :, :3]
 
   rows, cols = dest_shape[:2]
-  result_img = np.zeros((rows, cols, num_chans), np.uint8)
+  result_img = np.zeros((rows, cols, num_chans), np.float32)
 
   delaunay = spatial.Delaunay(dest_points)
   tri_affines = np.asarray(list(triangular_affine_matrices(
