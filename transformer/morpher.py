@@ -8,11 +8,11 @@
 
   Options:
     -h, --help             Show this screen.
-    --blend                Flag to blend images after averaging (default: False)
-    --version              Show version.
-    --data=<folder>        Folder to .xmls for classifiers (default: data)
     --src=<src_imgpath>    Filepath to source image (.jpg, .jpeg, .png)
     --dest=<dest_path>     Filepath to destination image (.jpg, .jpeg, .png)
+    --blend                Flag to blend images after averaging (default: False)
+    --data=<folder>        Folder to .xmls for classifiers (default: data)
+    --version              Show version.
 """
 
 from docopt import docopt
