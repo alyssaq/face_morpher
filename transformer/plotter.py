@@ -9,17 +9,21 @@ import os.path
 
 def check_do_plot(func):
   def inner(self, *args, **kwargs):
+    if not self.do_plot or self.filepath is None:
+      pass
+
     if 'save' in args and self.filepath is not None:
-      mpimg.imsave(self.filepath.format(self.counter[0] - 1), args[0])
+      filename = self.filepath.format(self.counter - 1)
+      mpimg.imsave(filename, args[0])
+      print filename
     if self.do_plot:
       return func(self, *args, **kwargs)
-    else:
-      pass
+    self.counter += 1
   return inner
 
 class Plotter(object):
   def __init__(self, plot=True, rows=0, cols=0, num_images=0, folder=None):
-    self.counter = [1]
+    self.counter = 1
     self.do_plot = plot
     self.set_filepath(folder)
 
@@ -42,11 +46,10 @@ class Plotter(object):
 
   @check_do_plot
   def plot_one(self, img, save=False):
-    p = plt.subplot(self.rows, self.cols, self.counter[0])
+    p = plt.subplot(self.rows, self.cols, self.counter)
     p.axes.get_xaxis().set_visible(False)
     p.axes.get_yaxis().set_visible(False)
     plt.imshow(img)
-    self.counter[0] += 1
 
   @check_do_plot
   def show(self):
