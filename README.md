@@ -66,6 +66,7 @@ Options:
   * Poisson blend
 
 ## Example: [Being John Malkovich](http://www.rottentomatoes.com/m/being_john_malkovich)
+##### Create a morphing video between the 2 images:
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
 `--out_video=out.avi`
 
@@ -73,9 +74,15 @@ Options:
 
 ![gif](examples/being_john_malvokich.gif)
 
-To save the frames to a folder:    
+##### Save the frames to a folder:    
 `> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
 `--out_frames=out_folder --num=30`
+
+##### Plot the frames
+`> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg`
+`--num=12 --plot`
+
+![plot](examples/plot.png)
 
 ## Documentation (requires sphinx)
 
