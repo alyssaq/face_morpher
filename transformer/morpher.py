@@ -6,9 +6,9 @@
   Usage:
     morpher.py --src=<src_path> --dest=<dest_path>
               [--width=<width>] [--height=<height>]
-              [--num=<num_frames>] [--blend] [--plot]
+              [--num=<num_frames>] [--fps=<frames_per_second>]
               [--out_frames=<folder>] [--out_video=<filename>]
-              [--data=<classifiers_folder>]
+              [--plot] [--blend] [--data=<classifiers_folder>]
 
   Options:
     -h, --help              Show this screen.
@@ -17,6 +17,7 @@
     --width=<width>         Custom width of the images/video [default: 500]
     --height=<height>       Custom height of the images/video [default: 600]
     --num=<num_frames>      Number of morph frames [default: 20]
+    --fps=<fps>             Number frames per second for the video [default: 10]
     --out_frames=<folder>   Folder path to save all image frames [default: None]
     --out_video=<filename>  Filename to save a video [default: None]
     --plot                  Flag to plot images [default: False]
@@ -42,11 +43,11 @@ def load_image_points(data_folder, path, size):
 
   return aligner.resize_align(img, points, size)
 
-def morph(data_folder, src_path, dest_path, num_frames=20,
-          width=500, height=600, out_frames=None, out_video=None,
+def morph(data_folder, src_path, dest_path, width=500, height=600,
+          num_frames=20, fps=10, out_frames=None, out_video=None,
           blend=False, plot=False):
   size = (height, width)
-  video = videoer.Video(out_video, num_frames, width, height)
+  video = videoer.Video(out_video, num_frames, fps, width, height)
   num_frames += (1 if blend else 0)
   plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
   num_frames -= 2  # No need to plot/save src and dest image
@@ -84,9 +85,9 @@ def test():
 
 if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
-  if args['--data'] is None:
-    args['--data'] = 'data'
-  print args
-  morph(args['--data'], args['--src'], args['--dest'], int(args['--num']),
-        int(args['--width']), int(args['--height']), args['--out_frames'],
-        args['--out_video'], args['--blend'], args['--plot'])
+
+  morph(args['--data'], args['--src'], args['--dest'],
+        int(args['--width']), int(args['--height']),
+        int(args['--num']), int(args['--fps']),
+        args['--out_frames'], args['--out_video'],
+        args['--blend'], args['--plot'])
