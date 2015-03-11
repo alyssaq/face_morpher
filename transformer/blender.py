@@ -12,8 +12,26 @@ def mask_from_points(size, points):
 
   return mask
 
+def apply_mask(img, mask):
+  """ Apply mask to supplied image
+  :param img: max 3 channel image
+  :param mask: [0-255] values in mask
+  :returns: new image with mask applied
+  """
+  masked_img = np.copy(img)
+  num_channels = 3
+  for c in xrange(num_channels):
+    masked_img[..., c] = img[..., c] * (mask / 255)
+
+  return masked_img
+
 def weighted_average(img1, img2, percent=0.5):
-  return cv2.addWeighted(img1, percent, img2, 1-percent, 0)
+  if percent <= 0:
+    return img2
+  elif percent >= 1:
+    return img1
+  else:
+    return cv2.addWeighted(img1, percent, img2, 1-percent, 0)
 
 def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
   mask = cv2.blur(img_mask, (blur_radius, blur_radius))
