@@ -59,7 +59,7 @@ Options:
 
 #### 1. Locator
 
- * Locates face points (using stasm)
+ * Locates face points (using [stasm](http://www.milbo.users.sonic.net/stasm))
  * For a different locator, return an array of (x, y) control face points
 
 #### 2. Aligner
