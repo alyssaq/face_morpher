@@ -27,14 +27,15 @@ class Video(object):
       self.video = cv2.VideoWriter(filename, fourcc, fps, (w, h), True)
 
   @check_write_video
-  def write(self, img):
+  def write(self, img, num_times=1):
     frame = np.copy(img)
     if img.shape[2] == 3:
       #  OpenCV channels are gbr so we need to swap scipy's rgb chs
       frame[..., 0], frame[..., 2] = img[..., 2], img[..., 0]
 
-    self.video.write(np.uint8(frame))
-    self.counter += 1
+    for i in xrange(num_times):
+      self.video.write(np.uint8(frame))
+      self.counter += 1
     if self.counter == self.num_frames:
       self.end()
 

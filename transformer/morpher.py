@@ -56,23 +56,28 @@ def load_image_points(data_folder, path, size):
   img = scipy.ndimage.imread(path)[..., :3]
   points = locator.face_points(data_folder, path)
 
-  return aligner.resize_align(img, points, size)
+  if len(points) == 0:
+    return None, None
+  else:
+    return aligner.resize_align(img, points, size)
 
 def morph(data_folder, src_path, dest_path, width=500, height=600,
           num_frames=20, fps=10, out_frames=None, out_video=None,
           blend=False, plot=False):
   size = (height, width)
-  video = videoer.Video(out_video, num_frames, fps, width, height)
+  stall_frames = np.clip(int(fps*0.15), 1, fps)  # Show first & last longer
+  video = videoer.Video(out_video, num_frames,
+                        fps, width, height)
   num_frames += (1 if blend else 0)
   plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
-  num_frames -= 2  # No need to plot/save src and dest image
+  num_frames -= (stall_frames * 2)  # No need to process src and dest image
 
   loader = partial(load_image_points, data_folder, size=size)
   src_img, src_points = loader(src_path)
   dest_img, dest_points = loader(dest_path)
 
   plt.plot_one(src_img)
-  video.write(src_img)
+  video.write(src_img, stall_frames)
 
   # Produce morph frames!
   for percent in np.linspace(1, 0, num=num_frames):
@@ -84,7 +89,7 @@ def morph(data_folder, src_path, dest_path, width=500, height=600,
     video.write(average_face)
 
   plt.plot_one(dest_img)
-  video.write(dest_img)
+  video.write(dest_img, stall_frames)
 
   if blend:
     print('blending')
