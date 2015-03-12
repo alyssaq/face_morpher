@@ -4,7 +4,7 @@
   Face averager
 
   Usage:
-    averager.py --images=<images_folder> [--blend] [--data=<classifiers_folder>]
+    averager.py --images=<images_folder> [--blend]
               [--width=<width>] [--height=<height>]
 
   Options:
@@ -13,7 +13,6 @@
     --blend            Flag to blend images [default: False]
     --width=<width>    Custom width of the images/video [default: 500]
     --height=<height>  Custom height of the images/video [default: 600]
-    --data=<folder>    Folder to .xmls for classifiers [default: data]
     --version          Show version.
 """
 from docopt import docopt
@@ -40,21 +39,19 @@ def sharpen(img):
   blured = cv2.GaussianBlur(img, (0, 0), 2.5)
   return cv2.addWeighted(img, 1.4, blured, -0.4, 0)
 
-def load_image_points(data_folder, path, size):
+def load_image_points(path, size):
   img = scipy.ndimage.imread(path)[..., :3]
-  points = locator.face_points(data_folder, path)
+  points = locator.face_points(path)
 
   if len(points) == 0:
     return None, None
   else:
     return aligner.resize_align(img, points, size)
 
-def average_faces(images_folder, data_folder, width=500, height=600,
-                  blend=False):
+def average_faces(images_folder, width=500, height=600, blend=False):
   imgpaths = list(list_imgpaths(images_folder))
-
   size = (height, width)
-  loader = partial(load_image_points, data_folder, size=size)
+  loader = partial(load_image_points, size=size)
 
   images = []
   point_set = []
@@ -78,8 +75,8 @@ def average_faces(images_folder, data_folder, width=500, height=600,
   if blend:
     result_image = sharpen(result_image)
     import blender
-    mask = blender.mask_from_points(base_img.shape[:2], base_points)
-    result_image = blender.alpha_feathering(base_img, result_image, mask)
+    mask = blender.mask_from_points(size, ave_points)
+    result_image = blender.poisson_blend(result_image, images[0], mask)
 
   print 'Processed {0} faces'.format(num_images)
   plt.axis('off')
@@ -89,5 +86,5 @@ def average_faces(images_folder, data_folder, width=500, height=600,
 
 if __name__ == "__main__":
   args = docopt(__doc__, version='Face Averager 1.0')
-  average_faces(args['--images'], args['--data'],
-                int(args['--width']), int(args['--height']), args['--blend'])
+  average_faces(args['--images'], int(args['--width']),
+                int(args['--height']), args['--blend'])

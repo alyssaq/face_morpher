@@ -6,7 +6,6 @@ import cv2
 import numpy as np
 import subprocess
 import os.path as path
-
 def boundary_points(points):
   """ Produce additional boundary points
 
@@ -20,19 +19,17 @@ def boundary_points(points):
   return [[x+spacerw, y+spacerh],
           [x+w-spacerw, y+spacerh]]
 
-def face_points(classifier_folder, imgpath, add_boundary_points=True):
+def face_points(imgpath, add_boundary_points=True):
   """ Locates 77 face points using stasm (http://www.milbo.users.sonic.net/stasm)
 
-  :param classifier_folder: path to folder containing the .xml classifier data
   :param imgpath: an image path to extract the 77 face points
   :param add_boundary_points: bool to add 2 additional points
   :returns: Array of x,y face points. Empty array if no face found
   """
-  stasm_path = path.join(
-    path.dirname(path.realpath(__file__)),
-    'bin/stasm_util')
-  command = '"{0}" -f "{1}" "{2}"'.format(
-    stasm_path, classifier_folder, imgpath)
+  directory = path.dirname(path.realpath(__file__))
+  stasm_path = path.join(directory, 'bin/stasm_util')
+  data_folder = path.join(directory, 'data')
+  command = '"{0}" -f "{1}" "{2}"'.format(stasm_path, data_folder, imgpath)
   s = subprocess.check_output(command, shell=True)
   if s.startswith('No face found'):
     return []
