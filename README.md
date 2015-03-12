@@ -12,25 +12,25 @@ All options listed in `morpher.py` (pasted below):
 Morph from source to destination face
 
 Usage:
-  morpher.py --src=<src_path> --dest=<dest_path>
+  morpher.py (--src=<src_path> --dest=<dest_path> | --images=<folder>)
             [--width=<width>] [--height=<height>]
             [--num=<num_frames>] [--fps=<frames_per_second>]
             [--out_frames=<folder>] [--out_video=<filename>]
-            [--plot] [--blend] [--data=<classifiers_folder>]
+            [--plot] [--blend]
 
 Options:
   -h, --help              Show this screen.
   --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
   --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
+  --images=<folder>       Folder to images
   --width=<width>         Custom width of the images/video [default: 500]
   --height=<height>       Custom height of the images/video [default: 600]
   --num=<num_frames>      Number of morph frames [default: 20]
   --fps=<fps>             Number frames per second for the video [default: 10]
-  --out_frames=<folder>   Folder path to save all image frames [default: None]
-  --out_video=<filename>  Filename to save a video [default: None]
+  --out_frames=<folder>   Folder path to save all image frames
+  --out_video=<filename>  Filename to save a video
   --plot                  Flag to plot images [default: False]
   --blend                 Flag to blend images [default: False]
-  --data=<folder>         Folder to .xmls for classifiers [default: data]
   --version               Show version.
 ```
 
@@ -43,7 +43,7 @@ All options listed in `averager.py` (pasted below):
 Face averager
 
 Usage:
-  averager.py --images=<images_folder> [--blend] [--data=<classifiers_folder>]
+  averager.py --images=<images_folder> [--blend]
             [--width=<width>] [--height=<height>]
 
 Options:
@@ -52,7 +52,6 @@ Options:
   --blend            Flag to blend images [default: False]
   --width=<width>    Custom width of the images/video [default: 500]
   --height=<height>  Custom height of the images/video [default: 600]
-  --data=<folder>    Folder to .xmls for classifiers [default: data]
   --version          Show version.
 ```
 
