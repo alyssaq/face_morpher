@@ -34,7 +34,7 @@ class Video(object):
       frame[..., 0], frame[..., 2] = img[..., 2], img[..., 0]
 
     for i in xrange(num_times):
-      self.video.write(np.uint8(frame))
+      self.video.write(frame)
       self.counter += 1
     if self.counter == self.num_frames:
       self.end()

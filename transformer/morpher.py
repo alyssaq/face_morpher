@@ -8,7 +8,7 @@
               [--width=<width>] [--height=<height>]
               [--num=<num_frames>] [--fps=<frames_per_second>]
               [--out_frames=<folder>] [--out_video=<filename>]
-              [--plot] [--blend] [--data=<classifiers_folder>]
+              [--plot] [--blend]
 
   Options:
     -h, --help              Show this screen.
@@ -23,7 +23,6 @@
     --out_video=<filename>  Filename to save a video
     --plot                  Flag to plot images [default: False]
     --blend                 Flag to blend images [default: False]
-    --data=<folder>         Folder to .xmls for classifiers [default: data]
     --version               Show version.
 """
 
@@ -52,16 +51,17 @@ def verify_args(args):
       print('--images=%s is not a valid directory' % args['--images'])
       exit(1)
 
-def load_image_points(data_folder, path, size):
+def load_image_points(path, size):
   img = scipy.ndimage.imread(path)[..., :3]
-  points = locator.face_points(data_folder, path)
+  points = locator.face_points(path)
 
   if len(points) == 0:
-    return None, None
+    print 'No face in image %s' % path
+    exit(1)
   else:
     return aligner.resize_align(img, points, size)
 
-def morph(data_folder, src_path, dest_path, width=500, height=600,
+def morph(src_path, dest_path, width=500, height=600,
           num_frames=20, fps=10, out_frames=None, out_video=None,
           blend=False, plot=False):
   size = (height, width)
@@ -72,9 +72,8 @@ def morph(data_folder, src_path, dest_path, width=500, height=600,
   plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
   num_frames -= (stall_frames * 2)  # No need to process src and dest image
 
-  loader = partial(load_image_points, data_folder, size=size)
-  src_img, src_points = loader(src_path)
-  dest_img, dest_points = loader(dest_path)
+  src_img, src_points = load_image_points(src_path, size)
+  dest_img, dest_points = load_image_points(dest_path, size)
 
   plt.plot_one(src_img)
   video.write(src_img, stall_frames)
@@ -107,7 +106,7 @@ if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
   verify_args(args)
 
-  morph(args['--data'], args['--src'], args['--dest'],
+  morph(args['--src'], args['--dest'],
         int(args['--width']), int(args['--height']),
         int(args['--num']), int(args['--fps']),
         args['--out_frames'], args['--out_video'],
