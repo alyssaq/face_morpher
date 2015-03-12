@@ -33,7 +33,7 @@ class Video(object):
       #  OpenCV channels are gbr so we need to swap scipy's rgb chs
       frame[..., 0], frame[..., 2] = img[..., 2], img[..., 0]
 
-    self.video.write(frame)
+    self.video.write(np.uint8(frame))
     self.counter += 1
     if self.counter == self.num_frames:
       self.end()
