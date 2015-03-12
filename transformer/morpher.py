@@ -4,7 +4,7 @@
   Morph from source to destination face
 
   Usage:
-    morpher.py --src=<src_path> --dest=<dest_path>
+    morpher.py (--src=<src_path> --dest=<dest_path> | --images=<folder>)
               [--width=<width>] [--height=<height>]
               [--num=<num_frames>] [--fps=<frames_per_second>]
               [--out_frames=<folder>] [--out_video=<filename>]
@@ -14,6 +14,7 @@
     -h, --help              Show this screen.
     --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
     --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
+    --images=<folder>       Folder to images
     --width=<width>         Custom width of the images/video [default: 500]
     --height=<height>       Custom height of the images/video [default: 600]
     --num=<num_frames>      Number of morph frames [default: 20]
@@ -36,6 +37,20 @@ import warper
 import blender
 import plotter
 import videoer
+import os
+
+def verify_args(args):
+  if args['--images'] is None:
+    valid = os.path.isfile(args['--src']) & os.path.isfile(args['--dest'])
+    if not valid:
+      print('--src=%s or --dest=%s are not valid images' % (
+        args['--src'], args['--dest']))
+      exit(1)
+  else:
+    valid = os.path.isdir(args['--images'])
+    if not valid:
+      print('--images=%s is not a valid directory' % args['--images'])
+      exit(1)
 
 def load_image_points(data_folder, path, size):
   img = scipy.ndimage.imread(path)[..., :3]
@@ -72,7 +87,7 @@ def morph(data_folder, src_path, dest_path, width=500, height=600,
   video.write(dest_img)
 
   if blend:
-    print 'blending'
+    print('blending')
     mask = blender.mask_from_points(size, dest_points)
     blended_img = blender.poisson_blend(src_face, dest_img, mask)
     plt.plot_one(blended_img)
@@ -85,6 +100,7 @@ def test():
 
 if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
+  verify_args(args)
 
   morph(args['--data'], args['--src'], args['--dest'],
         int(args['--width']), int(args['--height']),
