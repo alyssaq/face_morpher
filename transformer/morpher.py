@@ -29,14 +29,13 @@
 from docopt import docopt
 import scipy.ndimage
 import numpy as np
-from functools import partial
+import os
 import locator
 import aligner
 import warper
 import blender
 import plotter
 import videoer
-import os
 
 def verify_args(args):
   if args['--images'] is None:
