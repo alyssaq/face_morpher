@@ -20,7 +20,6 @@ import os
 import cv2
 import numpy as np
 import scipy.ndimage
-from functools import partial
 from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 
@@ -51,12 +50,11 @@ def load_image_points(path, size):
 def average_faces(images_folder, width=500, height=600, blend=False):
   imgpaths = list(list_imgpaths(images_folder))
   size = (height, width)
-  loader = partial(load_image_points, size=size)
 
   images = []
   point_set = []
   for path in imgpaths:
-    img, points = loader(path)
+    img, points = load_image_points(path, size)
     if img is not None:
       images.append(img)
       point_set.append(points)
@@ -68,7 +66,7 @@ def average_faces(images_folder, width=500, height=600, blend=False):
     print '{0} of {1}'.format(i+1, num_images)
 
     result_images += warper.warp_image(images[i], point_set[i],
-                                       ave_points, size)
+                                       ave_points, size, np.float32)
 
   result_image = np.uint8(result_images / num_images)
 

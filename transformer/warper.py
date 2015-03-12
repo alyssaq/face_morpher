@@ -74,13 +74,13 @@ def triangular_affine_matrices(vertices, src_points, dest_points):
     mat = np.dot(src_tri, np.linalg.inv(dst_tri))[:2, :]
     yield mat
 
-def warp_image(src_img, src_points, dest_points, dest_shape):
+def warp_image(src_img, src_points, dest_points, dest_shape, dtype=np.uint8):
   # Resultant image will not have an alpha channel
   num_chans = 3
   src_img = src_img[:, :, :3]
 
   rows, cols = dest_shape[:2]
-  result_img = np.zeros((rows, cols, num_chans), np.float32)
+  result_img = np.zeros((rows, cols, num_chans), dtype)
 
   delaunay = spatial.Delaunay(dest_points)
   tri_affines = np.asarray(list(triangular_affine_matrices(
