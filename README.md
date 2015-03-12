@@ -106,7 +106,7 @@ Optional blending of warped image:
 
 ![plot](examples/plot.png)
 
-#### Average all faces in an image folder:
+#### Average all face images in a folder:
 85 images used
 
 `> python transformer/averager.py --images=images --width=220 --height=250`
