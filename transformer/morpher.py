@@ -55,24 +55,37 @@ def load_image_points(path, size):
   points = locator.face_points(path)
 
   if len(points) == 0:
-    print 'No face in image %s' % path
-    exit(1)
+    print 'No face in %s' % path
+    return None, None
   else:
     return aligner.resize_align(img, points, size)
 
-def morph(src_path, dest_path, width=500, height=600,
+def load_valid_image_points(imgpaths, size):
+  for path in imgpaths:
+    img, points = load_image_points(path, size)
+    if img is not None:
+      print path
+      yield (img, points)
+
+def list_imgpaths(imgfolder):
+  for fname in os.listdir(imgfolder):
+    if (fname.lower().endswith('.jpg') or
+       fname.lower().endswith('.png') or
+       fname.lower().endswith('.jpeg')):
+      yield os.path.join(imgfolder, fname)
+
+def morph(src_img, src_points, dest_img, dest_points,
+          video, width=500, height=600,
           num_frames=20, fps=10, out_frames=None, out_video=None,
           blend=False, plot=False):
   size = (height, width)
   stall_frames = np.clip(int(fps*0.15), 1, fps)  # Show first & last longer
-  video = videoer.Video(out_video, num_frames,
-                        fps, width, height)
   num_frames += (1 if blend else 0)
   plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
   num_frames -= (stall_frames * 2)  # No need to process src and dest image
 
-  src_img, src_points = load_image_points(src_path, size)
-  dest_img, dest_points = load_image_points(dest_path, size)
+  # src_img, src_points = load_image_points(src_path, size)
+  # dest_img, dest_points = load_image_points(dest_path, size)
 
   plt.plot_one(src_img)
   video.write(src_img, stall_frames)
@@ -105,8 +118,25 @@ if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
   verify_args(args)
 
-  morph(args['--src'], args['--dest'],
-        int(args['--width']), int(args['--height']),
-        int(args['--num']), int(args['--fps']),
-        args['--out_frames'], args['--out_video'],
-        args['--blend'], args['--plot'])
+  height, width = (int(args['--height']), int(args['--width']))
+  size = (height, width)
+  images_folder = args['--images']
+  out_video = args['--out_video']
+  fps = int(args['--fps'])
+  video = videoer.Video(out_video, fps, width, height)
+  impaths = []
+  if images_folder is None:
+    imgpaths = [args['--src'], args['--dest']]
+  else:
+    imgpaths = list_imgpaths(images_folder)
+
+  images_points_gen = load_valid_image_points(imgpaths, size)
+  src_img, src_points = images_points_gen.next()
+  for dest_img, dest_points in images_points_gen:
+    morph(src_img, src_points, dest_img, dest_points, video,
+          int(args['--width']), int(args['--height']),
+          int(args['--num']), int(args['--fps']),
+          args['--out_frames'], args['--out_video'],
+          args['--blend'], args['--plot'])
+    src_img, src_points = dest_img, dest_points
+  video.end()

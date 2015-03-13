@@ -15,11 +15,10 @@ def check_write_video(func):
 
 
 class Video(object):
-  def __init__(self, filename, num_frames, fps, w, h):
+  def __init__(self, filename, fps, w, h):
     fourcc = cv2.cv.FOURCC('m', 'p', '4', 'v')
     self.filename = filename
     self.counter = 0
-    self.num_frames = num_frames
 
     if filename is None:
       self.video = None
@@ -36,8 +35,8 @@ class Video(object):
     for i in xrange(num_times):
       self.video.write(frame)
       self.counter += 1
-    if self.counter == self.num_frames:
-      self.end()
+    #if self.counter == self.num_frames:
+    #  self.end()
 
   @check_write_video
   def end(self):
