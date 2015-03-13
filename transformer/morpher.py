@@ -9,7 +9,7 @@
               [--width=<width>] [--height=<height>]
               [--num=<num_frames>] [--fps=<frames_per_second>]
               [--out_frames=<folder>] [--out_video=<filename>]
-              [--plot] [--blend]
+              [--plot]
 
   Options:
     -h, --help              Show this screen.
@@ -23,7 +23,6 @@
     --out_frames=<folder>   Folder path to save all image frames
     --out_video=<filename>  Filename to save a video
     --plot                  Flag to plot images [default: False]
-    --blend                 Flag to blend images [default: False]
     --version               Show version.
 """
 
@@ -76,17 +75,12 @@ def list_imgpaths(imgfolder):
       yield os.path.join(imgfolder, fname)
 
 def morph(src_img, src_points, dest_img, dest_points,
-          video, width=500, height=600,
-          num_frames=20, fps=10, out_frames=None, out_video=None,
-          blend=False, plot=False):
+          video, width=500, height=600, num_frames=20, fps=10,
+          out_frames=None, out_video=None, plot=False):
   size = (height, width)
   stall_frames = np.clip(int(fps*0.15), 1, fps)  # Show first & last longer
-  num_frames += (1 if blend else 0)
   plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
   num_frames -= (stall_frames * 2)  # No need to process src and dest image
-
-  # src_img, src_points = load_image_points(src_path, size)
-  # dest_img, dest_points = load_image_points(dest_path, size)
 
   plt.plot_one(src_img)
   video.write(src_img, stall_frames)
@@ -102,12 +96,6 @@ def morph(src_img, src_points, dest_img, dest_points,
 
   plt.plot_one(dest_img)
   video.write(dest_img, stall_frames)
-
-  if blend:
-    print('blending')
-    mask = blender.mask_from_points(size, dest_points)
-    blended_img = blender.poisson_blend(src_face, dest_img, mask)
-    plt.plot_one(blended_img)
 
   plt.show()
 
@@ -137,7 +125,6 @@ if __name__ == "__main__":
     morph(src_img, src_points, dest_img, dest_points, video,
           int(args['--width']), int(args['--height']),
           int(args['--num']), int(args['--fps']),
-          args['--out_frames'], args['--out_video'],
-          args['--blend'], args['--plot'])
+          args['--out_frames'], args['--out_video'], args['--plot'])
     src_img, src_points = dest_img, dest_points
   video.end()

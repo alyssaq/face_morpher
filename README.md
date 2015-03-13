@@ -21,7 +21,7 @@ Usage:
             [--width=<width>] [--height=<height>]
             [--num=<num_frames>] [--fps=<frames_per_second>]
             [--out_frames=<folder>] [--out_video=<filename>]
-            [--plot] [--blend]
+            [--plot]
 
 Options:
   -h, --help              Show this screen.
@@ -35,8 +35,7 @@ Options:
   --out_frames=<folder>   Folder path to save all image frames
   --out_video=<filename>  Filename to save a video
   --plot                  Flag to plot images [default: False]
-  --blend                 Flag to blend images [default: False]
-  --version               Show version.
+  --version               Show version
 ```
 
 ## Average faces from all images in a folder:
