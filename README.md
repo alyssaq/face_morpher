@@ -1,13 +1,16 @@
 # Face Morpher
 
 Warp, average and morph human faces!
+Scipts will automatically detect frontal faces and skip images if none is detected.
 
-## Morph between 2 or more images:
-Morph from a source to destination image
+Built with Python 2.7, OpenCV, Numpy, Scipy, Stasm.
+
+## Morphing Faces
+Morph from a source to destination image:
 
     python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
 
-Morph through a series of images in a folder
+Morph through a series of images in a folder:
 
     python transformer/morpher.py --images=<folder>
 
@@ -38,7 +41,8 @@ Options:
   --version               Show version
 ```
 
-## Average faces from all images in a folder:
+## Averaging Faces
+Average faces from all images in a folder:
 
     python transformer/averager.py --images=<images_folder>
 
