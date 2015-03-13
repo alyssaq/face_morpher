@@ -82,7 +82,7 @@ Options:
 
 #### 4a. Morpher
   
-  * Morph between 2 images
+  * Morph between 2 or more images
 
 #### 4b. Averager
 
