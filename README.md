@@ -1,6 +1,6 @@
 # Face Morpher
 
-Warp, average and morph human faces!
+Warp, average and morph human faces!    
 Scipts will automatically detect frontal faces and skip images if none is detected.
 
 Built with Python 2.7, OpenCV, Numpy, Scipy, Stasm.
