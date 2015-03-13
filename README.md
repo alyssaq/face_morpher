@@ -2,14 +2,19 @@
 
 Warp, average and morph human faces!
 
-## Morph between 2 images:
-Must supply path to source and destination image.
+## Morph between 2 or more images:
+Morph from a source to destination image
 
     python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
 
+Morph through a series of images in a folder
+
+    python transformer/morpher.py --images=<folder>
+
 All options listed in `morpher.py` (pasted below):
 ```
-Morph from source to destination face
+Morph from source to destination face or
+Morph through all images in a folder
 
 Usage:
   morpher.py (--src=<src_path> --dest=<dest_path> | --images=<folder>)
@@ -22,7 +27,7 @@ Options:
   -h, --help              Show this screen.
   --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
   --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
-  --images=<folder>       Folder to images
+  --images=<folder>       Folderpath to images
   --width=<width>         Custom width of the images/video [default: 500]
   --height=<height>       Custom height of the images/video [default: 600]
   --num=<num_frames>      Number of morph frames [default: 20]
