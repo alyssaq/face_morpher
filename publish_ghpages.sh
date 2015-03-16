@@ -5,6 +5,7 @@ git branch -D gh-pages
 git push origin :gh-pages
 
 git checkout -b gh-pages
+git rebase master
 git reset HEAD
 
 ./make_docs.sh
