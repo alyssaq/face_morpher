@@ -123,7 +123,7 @@ Optional blending of warped image:
 
 ## Documentation (requires sphinx)
 
-    ./make_docs.sh
+    ./scripts/make_docs.sh
 
 ## License
 [MIT](http://alyssaq.github.io/mit-license/)
