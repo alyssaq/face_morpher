@@ -5,13 +5,14 @@ git branch -D gh-pages
 git push origin :gh-pages
 
 git checkout -b gh-pages
+git reset HEAD
 
 ./make_docs.sh
 
 # Add docs
-mv docs/_build/html/*.html
+mv docs/_build/html/*.html .
 git add *.html
-mv docs/_build/html/*.js
+mv docs/_build/html/*.js .
 git add *.js
 mv docs/_build/html/_static/ _static
 git add _static
