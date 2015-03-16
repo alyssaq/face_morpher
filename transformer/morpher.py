@@ -67,16 +67,29 @@ def load_valid_image_points(imgpaths, size):
       print path
       yield (img, points)
 
-def list_imgpaths(imgfolder):
-  for fname in os.listdir(imgfolder):
-    if (fname.lower().endswith('.jpg') or
-       fname.lower().endswith('.png') or
-       fname.lower().endswith('.jpeg')):
-      yield os.path.join(imgfolder, fname)
+def list_imgpaths(images_folder, src_image, dest_image):
+  if images_folder is None:
+    yield src_image
+    yield dest_image
+  else:
+    for fname in os.listdir(images_folder):
+      if (fname.lower().endswith('.jpg') or
+         fname.lower().endswith('.png') or
+         fname.lower().endswith('.jpeg')):
+        yield os.path.join(images_folder, fname)
 
 def morph(src_img, src_points, dest_img, dest_points,
           video, width=500, height=600, num_frames=20, fps=10,
           out_frames=None, out_video=None, plot=False):
+  """
+  Create a morph sequence from source to destination image
+
+  :param src_img: ndarray source image
+  :param src_img: source image array of x,y face points
+  :param dest_img: ndarray destination image
+  :param dest_img: destination image array of x,y face points
+  :param video: transformer.videoer.Video object
+  """
   size = (height, width)
   stall_frames = np.clip(int(fps*0.15), 1, fps)  # Show first & last longer
   plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
@@ -99,32 +112,27 @@ def morph(src_img, src_points, dest_img, dest_points,
 
   plt.show()
 
-def test():
-  morph('../data', '../family/IMG_20140515_203547.jpg',
-        '../john_malkovich.jpg', 4, 600, 550, out_frames='test')
+def morph_many(imgpaths, width=500, height=600, num_frames=20, fps=10,
+               out_frames=None, out_video=None, plot=False):
+  """
+  Create a morph sequence from multiple images in imgpaths
+
+  :param imgpaths: array or generator of image paths
+  """
+  video = videoer.Video(out_video, fps, width, height)
+  images_points_gen = load_valid_image_points(imgpaths, (height, width))
+  src_img, src_points = images_points_gen.next()
+  for dest_img, dest_points in images_points_gen:
+    morph(src_img, src_points, dest_img, dest_points, video,
+          width, height, num_frames, fps, out_frames, out_video, plot)
+    src_img, src_points = dest_img, dest_points
+  video.end()
 
 if __name__ == "__main__":
   args = docopt(__doc__, version='2 Image Morpher 1.0')
   verify_args(args)
 
-  height, width = (int(args['--height']), int(args['--width']))
-  size = (height, width)
-  images_folder = args['--images']
-  out_video = args['--out_video']
-  fps = int(args['--fps'])
-  video = videoer.Video(out_video, fps, width, height)
-  impaths = []
-  if images_folder is None:
-    imgpaths = [args['--src'], args['--dest']]
-  else:
-    imgpaths = list_imgpaths(images_folder)
-
-  images_points_gen = load_valid_image_points(imgpaths, size)
-  src_img, src_points = images_points_gen.next()
-  for dest_img, dest_points in images_points_gen:
-    morph(src_img, src_points, dest_img, dest_points, video,
-          int(args['--width']), int(args['--height']),
-          int(args['--num']), int(args['--fps']),
-          args['--out_frames'], args['--out_video'], args['--plot'])
-    src_img, src_points = dest_img, dest_points
-  video.end()
+  morph_many(list_imgpaths(args['--images'], args['--src'], args['--dest']),
+             int(args['--width']), int(args['--height']),
+             int(args['--num']), int(args['--fps']),
+             args['--out_frames'], args['--out_video'], args['--plot'])
