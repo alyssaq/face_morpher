@@ -4,6 +4,8 @@
 git branch -D gh-pages
 git push origin :gh-pages
 
+git checkout -b gh-pages
+
 ./make_docs.sh
 
 # Add docs
