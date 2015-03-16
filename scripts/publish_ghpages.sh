@@ -8,6 +8,7 @@ git checkout -b gh-pages
 git rebase master
 git reset HEAD
 
+# make docs
 ./scripts/make_docs.sh
 
 # Add docs
