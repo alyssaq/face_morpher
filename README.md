@@ -121,9 +121,13 @@ Optional blending of warped image:
  
 ![average_faces](examples/average_faces.png)
 
-## Documentation (requires sphinx)
+## Documentation
 
-    ./scripts/make_docs.sh
+<http://alyssaq.github.io/face_morpher>
+
+#### Build & publish Docs
+  
+    ./scripts/publish_ghpages.sh
 
 ## License
 [MIT](http://alyssaq.github.io/mit-license/)
