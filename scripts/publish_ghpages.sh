@@ -8,7 +8,7 @@ git checkout -b gh-pages
 git rebase master
 git reset HEAD
 
-./make_docs.sh
+./scripts/make_docs.sh
 
 # Add docs
 mv docs/_build/html/*.html .
