@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>transformer.averager &mdash; transformer  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="transformer  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">transformer  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for transformer.averager</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">::</span>
+
+<span class="sd">  Face averager</span>
+
+<span class="sd">  Usage:</span>
+<span class="sd">    averager.py --images=&lt;images_folder&gt; [--blend]</span>
+<span class="sd">              [--width=&lt;width&gt;] [--height=&lt;height&gt;]</span>
+
+<span class="sd">  Options:</span>
+<span class="sd">    -h, --help         Show this screen.</span>
+<span class="sd">    --images=&lt;folder&gt;  Folder to images (.jpg, .jpeg, .png)</span>
+<span class="sd">    --blend            Flag to blend images [default: False]</span>
+<span class="sd">    --width=&lt;width&gt;    Custom width of the images/video [default: 500]</span>
+<span class="sd">    --height=&lt;height&gt;  Custom height of the images/video [default: 600]</span>
+<span class="sd">    --version          Show version.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.ndimage</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="kn">as</span> <span class="nn">mpimg</span>
+<span class="kn">import</span> <span class="nn">locator</span>
+<span class="kn">import</span> <span class="nn">aligner</span>
+<span class="kn">import</span> <span class="nn">warper</span>
+
+<div class="viewcode-block" id="list_imgpaths"><a class="viewcode-back" href="../../transformer.html#transformer.averager.list_imgpaths">[docs]</a><span class="k">def</span> <span class="nf">list_imgpaths</span><span class="p">(</span><span class="n">imgfolder</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">imgfolder</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">fname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.jpg&#39;</span><span class="p">)</span> <span class="ow">or</span>
+       <span class="n">fname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.png&#39;</span><span class="p">)</span> <span class="ow">or</span>
+       <span class="n">fname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.jpeg&#39;</span><span class="p">)):</span>
+      <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">imgfolder</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="sharpen"><a class="viewcode-back" href="../../transformer.html#transformer.averager.sharpen">[docs]</a><span class="k">def</span> <span class="nf">sharpen</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+  <span class="n">blured</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mf">2.5</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">addWeighted</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="n">blured</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="load_image_points"><a class="viewcode-back" href="../../transformer.html#transformer.averager.load_image_points">[docs]</a><span class="k">def</span> <span class="nf">load_image_points</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+  <span class="n">points</span> <span class="o">=</span> <span class="n">locator</span><span class="o">.</span><span class="n">face_points</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">aligner</span><span class="o">.</span><span class="n">resize_align</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="average_faces"><a class="viewcode-back" href="../../transformer.html#transformer.averager.average_faces">[docs]</a><span class="k">def</span> <span class="nf">average_faces</span><span class="p">(</span><span class="n">images_folder</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">blend</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="n">imgpaths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_imgpaths</span><span class="p">(</span><span class="n">images_folder</span><span class="p">))</span>
+  <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+
+  <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">point_set</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">imgpaths</span><span class="p">:</span>
+    <span class="n">img</span><span class="p">,</span> <span class="n">points</span> <span class="o">=</span> <span class="n">load_image_points</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+      <span class="n">point_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+  <span class="n">ave_points</span> <span class="o">=</span> <span class="n">locator</span><span class="o">.</span><span class="n">average_points</span><span class="p">(</span><span class="n">point_set</span><span class="p">)</span>
+  <span class="n">num_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+  <span class="n">result_images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">num_images</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;{0} of {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_images</span><span class="p">)</span>
+
+    <span class="n">result_images</span> <span class="o">+=</span> <span class="n">warper</span><span class="o">.</span><span class="n">warp_image</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">point_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                       <span class="n">ave_points</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+  <span class="n">result_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">result_images</span> <span class="o">/</span> <span class="n">num_images</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">blend</span><span class="p">:</span>
+    <span class="n">result_image</span> <span class="o">=</span> <span class="n">sharpen</span><span class="p">(</span><span class="n">result_image</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">blender</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">blender</span><span class="o">.</span><span class="n">mask_from_points</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">ave_points</span><span class="p">)</span>
+    <span class="n">result_image</span> <span class="o">=</span> <span class="n">blender</span><span class="o">.</span><span class="n">poisson_blend</span><span class="p">(</span><span class="n">result_image</span><span class="p">,</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mask</span><span class="p">)</span>
+
+  <span class="k">print</span> <span class="s">&#39;Processed {0} faces&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_images</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">result_image</span><span class="p">)</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+  <span class="n">mpimg</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="s">&#39;result.png&#39;</span><span class="p">,</span> <span class="n">result_image</span><span class="p">)</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">args</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s">&#39;Face Averager 1.0&#39;</span><span class="p">)</span>
+  <span class="n">average_faces</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;--images&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;--width&#39;</span><span class="p">]),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s">&#39;--height&#39;</span><span class="p">]),</span> <span class="n">args</span><span class="p">[</span><span class="s">&#39;--blend&#39;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Alyssa Quek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3b3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.1</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>transformer.aligner &mdash; transformer  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="transformer  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">transformer  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for transformer.aligner</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Align face and image sizes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="positive_cap"><a class="viewcode-back" href="../../transformer.html#transformer.aligner.positive_cap">[docs]</a><span class="k">def</span> <span class="nf">positive_cap</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Cap a number to ensure positivity</span>
+
+<span class="sd">  :param num: positive or negative number</span>
+<span class="sd">  :returns: (overflow, capped_number)</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">num</span><span class="p">,</span> <span class="mi">0</span>
+</div>
+<div class="viewcode-block" id="roi_coordinates"><a class="viewcode-back" href="../../transformer.html#transformer.aligner.roi_coordinates">[docs]</a><span class="k">def</span> <span class="nf">roi_coordinates</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Align the rectangle into the center and return the top-left coordinates</span>
+<span class="sd">  within the new size. If rect is smaller, we add borders.</span>
+
+<span class="sd">  :param rect: (x, y, w, h) bounding rectangle of the face</span>
+<span class="sd">  :param size: new width, new height are the dimensions of the crop</span>
+<span class="sd">  :param scale: scaling factor of the rectangle to be resized</span>
+<span class="sd">  :returns: 4 numbers. Top-left coordinates of the aligned ROI.</span>
+<span class="sd">    (x, y, border_x, border_y). All values are &gt; 0.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">rectx</span><span class="p">,</span> <span class="n">recty</span><span class="p">,</span> <span class="n">rectw</span><span class="p">,</span> <span class="n">recth</span> <span class="o">=</span> <span class="n">rect</span>
+  <span class="n">new_height</span><span class="p">,</span> <span class="n">new_width</span> <span class="o">=</span> <span class="n">size</span>
+  <span class="n">mid_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">rectx</span> <span class="o">+</span> <span class="n">rectw</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+  <span class="n">mid_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">recty</span> <span class="o">+</span> <span class="n">recth</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+  <span class="n">roi_x</span> <span class="o">=</span> <span class="n">mid_x</span> <span class="o">-</span> <span class="n">new_width</span><span class="o">/</span><span class="mi">2</span>
+  <span class="n">roi_y</span> <span class="o">=</span> <span class="n">mid_y</span> <span class="o">-</span> <span class="n">new_height</span><span class="o">/</span><span class="mi">2</span>
+
+  <span class="n">roi_x</span><span class="p">,</span> <span class="n">border_x</span> <span class="o">=</span> <span class="n">positive_cap</span><span class="p">(</span><span class="n">roi_x</span><span class="p">)</span>
+  <span class="n">roi_y</span><span class="p">,</span> <span class="n">border_y</span> <span class="o">=</span> <span class="n">positive_cap</span><span class="p">(</span><span class="n">roi_y</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">roi_x</span><span class="p">,</span> <span class="n">roi_y</span><span class="p">,</span> <span class="n">border_x</span><span class="p">,</span> <span class="n">border_y</span>
+</div>
+<div class="viewcode-block" id="resize_align"><a class="viewcode-back" href="../../transformer.html#transformer.aligner.resize_align">[docs]</a><span class="k">def</span> <span class="nf">resize_align</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Resize image and associated points and align to the new supplied size</span>
+
+<span class="sd">  :param img: image to be resized</span>
+<span class="sd">  :param points: *m* x 2 array of points</span>
+<span class="sd">  :param size: (height, width) tuple of new size</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c"># Resize image based on bounding rectangle</span>
+  <span class="n">cur_height</span><span class="p">,</span> <span class="n">cur_width</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">new_height</span><span class="p">,</span> <span class="n">new_width</span> <span class="o">=</span> <span class="n">size</span>
+  <span class="n">rect</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">points</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+  <span class="n">new_rectw</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">new_width</span>
+  <span class="n">scale</span> <span class="o">=</span> <span class="n">new_rectw</span> <span class="o">/</span> <span class="p">(</span><span class="n">rect</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">)</span>
+  <span class="n">new_scaled_height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">cur_height</span><span class="p">)</span>
+  <span class="n">new_scaled_width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">cur_width</span><span class="p">)</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">new_scaled_width</span><span class="p">,</span> <span class="n">new_scaled_height</span><span class="p">))</span>
+
+  <span class="c"># Align bounding rect to center and crop to supplied size</span>
+  <span class="n">cur_height</span><span class="p">,</span> <span class="n">cur_width</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">roi_x</span><span class="p">,</span> <span class="n">roi_y</span><span class="p">,</span> <span class="n">border_x</span><span class="p">,</span> <span class="n">border_y</span> <span class="o">=</span> <span class="n">roi_coordinates</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+  <span class="n">crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">new_height</span><span class="p">,</span> <span class="n">new_width</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+  <span class="n">roi_h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">new_height</span><span class="p">,</span> <span class="n">cur_height</span><span class="o">-</span><span class="n">roi_y</span><span class="p">)</span> <span class="o">-</span> <span class="n">border_y</span>
+  <span class="n">roi_w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">new_width</span><span class="p">,</span> <span class="n">cur_width</span><span class="o">-</span><span class="n">roi_x</span><span class="p">)</span> <span class="o">-</span> <span class="n">border_x</span>
+  <span class="c"># print border_x, border_y, roi_x, roi_y, roi_w, roi_h, img.shape</span>
+  <span class="n">crop</span><span class="p">[</span><span class="n">border_y</span><span class="p">:</span><span class="n">border_y</span><span class="o">+</span><span class="n">roi_h</span><span class="p">,</span> <span class="n">border_x</span><span class="p">:</span><span class="n">border_x</span><span class="o">+</span><span class="n">roi_w</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">img</span><span class="p">[</span><span class="n">roi_y</span><span class="p">:</span><span class="n">roi_y</span><span class="o">+</span><span class="n">roi_h</span><span class="p">,</span> <span class="n">roi_x</span><span class="p">:</span><span class="n">roi_x</span><span class="o">+</span><span class="n">roi_w</span><span class="p">])</span>
+  <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">border_x</span> <span class="o">-</span> <span class="n">roi_x</span><span class="p">)</span>
+  <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">border_y</span> <span class="o">-</span> <span class="n">roi_y</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Alyssa Quek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3b3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.1</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>transformer.locator &mdash; transformer  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="transformer  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">transformer  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for transformer.locator</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Locate face points</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="kn">as</span> <span class="nn">path</span>
+<div class="viewcode-block" id="boundary_points"><a class="viewcode-back" href="../../transformer.html#transformer.locator.boundary_points">[docs]</a><span class="k">def</span> <span class="nf">boundary_points</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Produce additional boundary points</span>
+
+<span class="sd">  :param points: *m* x 2 array of x,y points</span>
+<span class="sd">  :returns: 2 additional points at the top corners</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">points</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+  <span class="n">buffer_percent</span> <span class="o">=</span> <span class="mf">0.1</span>
+  <span class="n">spacerw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">buffer_percent</span><span class="p">)</span>
+  <span class="n">spacerh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">buffer_percent</span><span class="p">)</span>
+  <span class="k">return</span> <span class="p">[[</span><span class="n">x</span><span class="o">+</span><span class="n">spacerw</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">spacerh</span><span class="p">],</span>
+          <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="n">w</span><span class="o">-</span><span class="n">spacerw</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">spacerh</span><span class="p">]]</span>
+</div>
+<div class="viewcode-block" id="face_points"><a class="viewcode-back" href="../../transformer.html#transformer.locator.face_points">[docs]</a><span class="k">def</span> <span class="nf">face_points</span><span class="p">(</span><span class="n">imgpath</span><span class="p">,</span> <span class="n">add_boundary_points</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Locates 77 face points using stasm (http://www.milbo.users.sonic.net/stasm)</span>
+
+<span class="sd">  :param imgpath: an image path to extract the 77 face points</span>
+<span class="sd">  :param add_boundary_points: bool to add 2 additional points</span>
+<span class="sd">  :returns: Array of x,y face points. Empty array if no face found</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+  <span class="n">stasm_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s">&#39;bin/stasm_util&#39;</span><span class="p">)</span>
+  <span class="n">data_folder</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">)</span>
+  <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;&quot;{0}&quot; -f &quot;{1}&quot; &quot;{2}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stasm_path</span><span class="p">,</span> <span class="n">data_folder</span><span class="p">,</span> <span class="n">imgpath</span><span class="p">)</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;No face found&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[]</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)],</span>
+                      <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">add_boundary_points</span><span class="p">):</span>
+      <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">points</span><span class="p">,</span> <span class="n">boundary_points</span><span class="p">(</span><span class="n">points</span><span class="p">)])</span>
+
+    <span class="k">return</span> <span class="n">points</span>
+</div>
+<div class="viewcode-block" id="average_points"><a class="viewcode-back" href="../../transformer.html#transformer.locator.average_points">[docs]</a><span class="k">def</span> <span class="nf">average_points</span><span class="p">(</span><span class="n">point_set</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Averages a set of face points from images</span>
+
+<span class="sd">  :param point_set: *n* x *m* x 2 array of face points. \\</span>
+<span class="sd">  *n* = number of images. *m* = number of face points per image</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">point_set</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="weighted_average_points"><a class="viewcode-back" href="../../transformer.html#transformer.locator.weighted_average_points">[docs]</a><span class="k">def</span> <span class="nf">weighted_average_points</span><span class="p">(</span><span class="n">start_points</span><span class="p">,</span> <span class="n">end_points</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Weighted average of two sets of supplied points</span>
+
+<span class="sd">  :param start_points: *m* x 2 array of start face points.</span>
+<span class="sd">  :param end_points: *m* x 2 array of end face points.</span>
+<span class="sd">  :param percent: [0, 1] percentage weight on start_points</span>
+<span class="sd">  :returns: *m* x 2 array of weighted average points</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">percent</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">end_points</span>
+  <span class="k">elif</span> <span class="n">percent</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">start_points</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">start_points</span><span class="o">*</span><span class="n">percent</span> <span class="o">+</span> <span class="n">end_points</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">percent</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Alyssa Quek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3b3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.1</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
