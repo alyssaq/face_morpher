@@ -129,7 +129,7 @@ def morph_many(imgpaths, width=500, height=600, num_frames=20, fps=10,
   video.end()
 
 if __name__ == "__main__":
-  args = docopt(__doc__, version='2 Image Morpher 1.0')
+  args = docopt(__doc__, version='Face Morpher 1.0')
   verify_args(args)
 
   morph_many(list_imgpaths(args['--images'], args['--src'], args['--dest']),
