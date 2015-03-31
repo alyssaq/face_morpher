@@ -4,13 +4,14 @@
   Face averager
 
   Usage:
-    averager.py --images=<images_folder> [--blur] [--plot]
+    averager.py --images=<images_folder> [--blur] [--alpha] [--plot]
               [--width=<width>] [--height=<height>] [--out=<filename>]
 
   Options:
     -h, --help         Show this screen.
     --images=<folder>  Folder to images (.jpg, .jpeg, .png)
     --blur             Flag to blur edges of image [default: False]
+    --alpha            Flag to save with transparent background [default: False]
     --width=<width>    Custom width of the images/video [default: 500]
     --height=<height>  Custom height of the images/video [default: 600]
     --out=<filename>   Filename to save the average face [default: result.png]
@@ -50,8 +51,8 @@ def load_image_points(path, size):
   else:
     return aligner.resize_align(img, points, size)
 
-def average_faces(images_folder, width=500, height=600, blur_edges=False,
-                  out_filename='result.png', plot=False):
+def average_faces(images_folder, width=500, height=600, alpha=False,
+                  blur_edges=False, out_filename='result.png', plot=False):
   imgpaths = list(list_imgpaths(images_folder))
   size = (height, width)
 
@@ -72,14 +73,14 @@ def average_faces(images_folder, width=500, height=600, blur_edges=False,
                                        ave_points, size, np.float32)
 
   result_image = np.uint8(result_images / num_images)
-  mask = blender.mask_from_points(size, ave_points)
+  print 'Processed {0} faces'.format(num_images)
 
+  mask = blender.mask_from_points(size, ave_points)
   if blur_edges:
     blur_radius = 10
     mask = cv2.blur(mask, (blur_radius, blur_radius))
-
-  print 'Processed {0} faces'.format(num_images)
-  result_image = np.dstack((result_image, mask))
+  if alpha:
+    result_image = np.dstack((result_image, mask))
   mpimg.imsave(out_filename, result_image)
 
   if plot:
@@ -90,5 +91,5 @@ def average_faces(images_folder, width=500, height=600, blur_edges=False,
 if __name__ == "__main__":
   args = docopt(__doc__, version='Face Averager 1.0')
   average_faces(args['--images'], int(args['--width']),
-                int(args['--height']), args['--blur'],
+                int(args['--height']), args['--alpha'], args['--blur'],
                 args['--out'], args['--plot'])
