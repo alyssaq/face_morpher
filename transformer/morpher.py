@@ -9,7 +9,7 @@
               [--width=<width>] [--height=<height>]
               [--num=<num_frames>] [--fps=<frames_per_second>]
               [--out_frames=<folder>] [--out_video=<filename>]
-              [--plot]
+              [--alpha] [--plot]
 
   Options:
     -h, --help              Show this screen.
@@ -22,6 +22,7 @@
     --fps=<fps>             Number frames per second for the video [default: 10]
     --out_frames=<folder>   Folder path to save all image frames
     --out_video=<filename>  Filename to save a video
+    --alpha                 Flag to save transparent background [default: False]
     --plot                  Flag to plot images [default: False]
     --version               Show version.
 """
@@ -78,9 +79,13 @@ def list_imgpaths(images_folder, src_image, dest_image):
          fname.lower().endswith('.jpeg')):
         yield os.path.join(images_folder, fname)
 
+def alpha_image(img, points):
+  mask = blender.mask_from_points(img.shape[:2], points)
+  return np.dstack((img, mask))
+
 def morph(src_img, src_points, dest_img, dest_points,
           video, width=500, height=600, num_frames=20, fps=10,
-          out_frames=None, out_video=None, plot=False):
+          out_frames=None, out_video=None, alpha=False, plot=False):
   """
   Create a morph sequence from source to destination image
 
@@ -104,6 +109,7 @@ def morph(src_img, src_points, dest_img, dest_points,
     src_face = warper.warp_image(src_img, src_points, points, size)
     end_face = warper.warp_image(dest_img, dest_points, points, size)
     average_face = blender.weighted_average(src_face, end_face, percent)
+    average_face = alpha_image(average_face, points) if alpha else average_face
     plt.plot_one(average_face, 'save')
     video.write(average_face)
 
@@ -113,7 +119,7 @@ def morph(src_img, src_points, dest_img, dest_points,
   plt.show()
 
 def morph_many(imgpaths, width=500, height=600, num_frames=20, fps=10,
-               out_frames=None, out_video=None, plot=False):
+               out_frames=None, out_video=None, alpha=False, plot=False):
   """
   Create a morph sequence from multiple images in imgpaths
 
@@ -124,7 +130,7 @@ def morph_many(imgpaths, width=500, height=600, num_frames=20, fps=10,
   src_img, src_points = images_points_gen.next()
   for dest_img, dest_points in images_points_gen:
     morph(src_img, src_points, dest_img, dest_points, video,
-          width, height, num_frames, fps, out_frames, out_video, plot)
+          width, height, num_frames, fps, out_frames, out_video, alpha, plot)
     src_img, src_points = dest_img, dest_points
   video.end()
 
@@ -135,4 +141,5 @@ if __name__ == "__main__":
   morph_many(list_imgpaths(args['--images'], args['--src'], args['--dest']),
              int(args['--width']), int(args['--height']),
              int(args['--num']), int(args['--fps']),
-             args['--out_frames'], args['--out_video'], args['--plot'])
+             args['--out_frames'], args['--out_video'],
+             args['--alpha'], args['--plot'])

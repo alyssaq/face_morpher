@@ -24,7 +24,7 @@ Usage:
             [--width=<width>] [--height=<height>]
             [--num=<num_frames>] [--fps=<frames_per_second>]
             [--out_frames=<folder>] [--out_video=<filename>]
-            [--plot]
+            [--alpha] [--plot]
 
 Options:
   -h, --help              Show this screen.
@@ -37,8 +37,9 @@ Options:
   --fps=<fps>             Number frames per second for the video [default: 10]
   --out_frames=<folder>   Folder path to save all image frames
   --out_video=<filename>  Filename to save a video
+  --alpha                 Flag to save transparent background [default: False]
   --plot                  Flag to plot images [default: False]
-  --version               Show version
+  --version               Show version.
 ```
 
 ## Averaging Faces
