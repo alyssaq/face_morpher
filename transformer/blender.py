@@ -3,7 +3,7 @@ import numpy as np
 import scipy.sparse
 
 def mask_from_points(size, points):
-  radius = 15  # kernel size
+  radius = 10  # kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
   mask = np.zeros(size, np.uint8)
