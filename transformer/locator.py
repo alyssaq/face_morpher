@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import subprocess
 import os.path as path
+
 def boundary_points(points):
   """ Produce additional boundary points
 
