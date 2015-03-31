@@ -51,8 +51,8 @@ All options listed in `averager.py` (pasted below):
 Face averager
 
 Usage:
-  averager.py --images=<images_folder> [--blend]
-            [--width=<width>] [--height=<height>]
+  averager.py --images=<images_folder> [--blend] [--plot]
+            [--width=<width>] [--height=<height>] [--out=<filename>]
 
 Options:
   -h, --help         Show this screen.
@@ -60,6 +60,8 @@ Options:
   --blend            Flag to blend images [default: False]
   --width=<width>    Custom width of the images/video [default: 500]
   --height=<height>  Custom height of the images/video [default: 600]
+  --out=<filename>   Filename to save the average face [default: result.png]
+  --plot             Flag to display the average face [default: False]
   --version          Show version.
 ```
 
