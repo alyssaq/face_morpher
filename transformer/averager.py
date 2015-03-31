@@ -4,8 +4,8 @@
   Face averager
 
   Usage:
-    averager.py --images=<images_folder> [--blend]
-              [--width=<width>] [--height=<height>]
+    averager.py --images=<images_folder> [--blend] [--plot]
+              [--width=<width>] [--height=<height>] [--out=<filename>]
 
   Options:
     -h, --help         Show this screen.
@@ -13,6 +13,8 @@
     --blend            Flag to blend images [default: False]
     --width=<width>    Custom width of the images/video [default: 500]
     --height=<height>  Custom height of the images/video [default: 600]
+    --out=<filename>   Filename to save the average face [default: result.png]
+    --plot             Flag to display the average face [default: False]
     --version          Show version.
 """
 
@@ -26,6 +28,7 @@ import matplotlib.image as mpimg
 import locator
 import aligner
 import warper
+import blender
 
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):
@@ -47,7 +50,8 @@ def load_image_points(path, size):
   else:
     return aligner.resize_align(img, points, size)
 
-def average_faces(images_folder, width=500, height=600, blend=False):
+def average_faces(images_folder, width=500, height=600, blend=False,
+                  out_filename='result.png', plot=False):
   imgpaths = list(list_imgpaths(images_folder))
   size = (height, width)
 
@@ -69,20 +73,23 @@ def average_faces(images_folder, width=500, height=600, blend=False):
                                        ave_points, size, np.float32)
 
   result_image = np.uint8(result_images / num_images)
+  mask = blender.mask_from_points(size, ave_points)
 
   if blend:
     result_image = sharpen(result_image)
-    import blender
-    mask = blender.mask_from_points(size, ave_points)
     result_image = blender.poisson_blend(result_image, images[0], mask)
 
   print 'Processed {0} faces'.format(num_images)
-  plt.axis('off')
-  plt.imshow(result_image)
-  plt.show()
-  mpimg.imsave('result.png', result_image)
+  result_image = np.dstack((result_image, mask))
+  mpimg.imsave(out_filename, result_image)
+
+  if plot:
+    plt.axis('off')
+    plt.imshow(result_image)
+    plt.show()
 
 if __name__ == "__main__":
   args = docopt(__doc__, version='Face Averager 1.0')
   average_faces(args['--images'], int(args['--width']),
-                int(args['--height']), args['--blend'])
+                int(args['--height']), args['--blend'],
+                args['--out'], args['--plot'])
