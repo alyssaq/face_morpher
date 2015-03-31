@@ -51,13 +51,13 @@ All options listed in `averager.py` (pasted below):
 Face averager
 
 Usage:
-  averager.py --images=<images_folder> [--blend] [--plot]
+  averager.py --images=<images_folder> [--blur] [--plot]
             [--width=<width>] [--height=<height>] [--out=<filename>]
 
 Options:
   -h, --help         Show this screen.
   --images=<folder>  Folder to images (.jpg, .jpeg, .png)
-  --blend            Flag to blend images [default: False]
+  --blur             Flag to blur edges of image [default: False]
   --width=<width>    Custom width of the images/video [default: 500]
   --height=<height>  Custom height of the images/video [default: 600]
   --out=<filename>   Filename to save the average face [default: result.png]
@@ -119,7 +119,8 @@ Optional blending of warped image:
 #### Average all face images in a folder:
 85 images used
 
-`> python transformer/averager.py --images=images --width=220 --height=250`
+`> python transformer/averager.py --images=images --blur`   
+`--width=220 --height=250`
  
 ![average_faces](examples/average_faces.png)
 
