@@ -1,7 +1,7 @@
 # Face Morpher
 
 Warp, average and morph human faces!    
-Scipts will automatically detect frontal faces and skip images if none is detected.
+Scripts will automatically detect frontal faces and skip images if none is detected.
 
 Built with Python 2.7, OpenCV, Numpy, Scipy, Stasm.
 
@@ -125,6 +125,13 @@ Optional blending of warped image:
 `--width=220 --height=250`
  
 ![average_faces](examples/average_faces.png)
+
+## Installation
+
+  * [OpenCV](http://opencv.org) - [Mac installation steps](http://scriptogr.am/alyssa/post/installing-opencv-on-mac-osx-with-homebrew)
+  * `pip install -r requirements.txt`
+  * Data for the haar face classifiers are in the `transformer\data` folder
+  * Stasm binary in `transformer\bin\stasm_util`. You can build a new stasm binary with the [Stasm 4 build scripts](https://github.com/alyssaq/stasm_build).
 
 ## Documentation
 
