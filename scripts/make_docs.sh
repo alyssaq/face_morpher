@@ -1,7 +1,7 @@
 #!/bin/bash          
 
 rm -rf docs
-# reStructuredText in python files to to rst. Documentation in docs folder
+# reStructuredText in python files to rst. Documentation in docs folder
 sphinx-apidoc -A "Alyssa Quek" -f -F -o docs transformer/
 
 cd docs
