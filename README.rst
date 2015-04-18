@@ -7,6 +7,24 @@ Face Morpher
 
 Built with Python 2.7, OpenCV, Numpy, Scipy, Stasm.
 
+Requirements
+--------------
+-  Install `OpenCV`_: `Mac installation steps`_
+-  ``pip install -r requirements.txt``
+
+Either use as:
+
+-  `Local command-line utility`_
+-  `pip library`_
+
+.. _`Local command-line utility`:
+
+Use as local command-line utility
+---------------------------------
+::
+
+    $ git clone https://github.com/alyssaq/face_morpher
+
 Morphing Faces
 --------------
 
@@ -133,10 +151,8 @@ Create a morphing video between the 2 images:
 
 (out.avi played and recorded as gif)
 
-.. figure:: examples/being_john_malvokich.gif
+.. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/being_john_malvokich.gif
    :alt: gif
-
-   gif
 
 Save the frames to a folder:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -150,10 +166,8 @@ Plot the frames:
 | ``> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
 | ``--num=12 --plot``
 
-.. figure:: examples/plot.png
+.. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/plot.png
    :alt: plot
-
-   plot
 
 Average all face images in a folder:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -163,16 +177,32 @@ Average all face images in a folder:
 | ``> python transformer/averager.py --images=images --blur --alpha``
 | ``--width=220 --height=250``
 
-.. figure:: examples/average_faces.png
+.. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/average_faces.png
    :alt: average\_faces
 
-   average\_faces
+.. _`pip library`:
 
-Installation
+Use as library
+---------------------------------
+::
+
+    $ pip install facemorpher
+
+Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Additional options are exactly the same as the command line
+
+::
+
+    $ ipython
+    In[1]: import transformer
+    # To morph, supply an array of face images:
+    In[2]: transformer.morpher(['image1.png', 'image2.png'], plot=True)
+    # To average, supply an array of face images:
+    In[2]: transformer.averager(['image1.png', 'image2.png'], plot=True)
+
+Details
 ------------
-
--  `OpenCV`_ - `Mac installation steps`_
--  ``pip install -r requirements.txt``
 -  Data for the haar face classifiers are in the ``transformer\data``
    folder
 -  Stasm binary in ``transformer\bin\stasm_util``. You can build a new
