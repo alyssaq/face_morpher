@@ -68,7 +68,7 @@ def load_valid_image_points(imgpaths, size):
       print path
       yield (img, points)
 
-def list_imgpaths(images_folder, src_image, dest_image):
+def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
   if images_folder is None:
     yield src_image
     yield dest_image
@@ -118,8 +118,8 @@ def morph(src_img, src_points, dest_img, dest_points,
 
   plt.show()
 
-def morph_many(imgpaths, width=500, height=600, num_frames=20, fps=10,
-               out_frames=None, out_video=None, alpha=False, plot=False):
+def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
+            out_frames=None, out_video=None, alpha=False, plot=False):
   """
   Create a morph sequence from multiple images in imgpaths
 
@@ -138,8 +138,8 @@ if __name__ == "__main__":
   args = docopt(__doc__, version='Face Morpher 1.0')
   verify_args(args)
 
-  morph_many(list_imgpaths(args['--images'], args['--src'], args['--dest']),
-             int(args['--width']), int(args['--height']),
-             int(args['--num']), int(args['--fps']),
-             args['--out_frames'], args['--out_video'],
-             args['--alpha'], args['--plot'])
+  morpher(list_imgpaths(args['--images'], args['--src'], args['--dest']),
+          int(args['--width']), int(args['--height']),
+          int(args['--num']), int(args['--fps']),
+          args['--out_frames'], args['--out_video'],
+          args['--alpha'], args['--plot'])

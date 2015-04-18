@@ -51,9 +51,8 @@ def load_image_points(path, size):
   else:
     return aligner.resize_align(img, points, size)
 
-def average_faces(images_folder, width=500, height=600, alpha=False,
-                  blur_edges=False, out_filename='result.png', plot=False):
-  imgpaths = list(list_imgpaths(images_folder))
+def averager(imgpaths, width=500, height=600, alpha=False,
+             blur_edges=False, out_filename='result.png', plot=False):
   size = (height, width)
 
   images = []
@@ -90,6 +89,6 @@ def average_faces(images_folder, width=500, height=600, alpha=False,
 
 if __name__ == "__main__":
   args = docopt(__doc__, version='Face Averager 1.0')
-  average_faces(args['--images'], int(args['--width']),
-                int(args['--height']), args['--alpha'], args['--blur'],
-                args['--out'], args['--plot'])
+  averager(list_imgpaths(args['--images']), int(args['--width']),
+           int(args['--height']), args['--alpha'], args['--blur'],
+           args['--out'], args['--plot'])
