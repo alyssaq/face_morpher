@@ -1,8 +1,8 @@
-#!/bin/bash          
+#!/bin/bash
 
 rm -rf docs
 # reStructuredText in python files to rst. Documentation in docs folder
-sphinx-apidoc -A "Alyssa Quek" -f -F -o docs transformer/
+sphinx-apidoc -A "Alyssa Quek" -f -F -o docs facemorpher/
 
 cd docs
 # Append module path to end of conf file

@@ -32,13 +32,13 @@ Morph from a source to destination image:
 
 ::
 
-    python transformer/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
+    python facemorpher/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
 
 Morph through a series of images in a folder:
 
 ::
 
-    python transformer/morpher.py --images=<folder>
+    python facemorpher/morpher.py --images=<folder>
 
 All options listed in ``morpher.py`` (pasted below):
 
@@ -76,7 +76,7 @@ Average faces from all images in a folder:
 
 ::
 
-    python transformer/averager.py --images=<images_folder>
+    python facemorpher/averager.py --images=<images_folder>
 
 All options listed in ``averager.py`` (pasted below):
 
@@ -99,7 +99,7 @@ All options listed in ``averager.py`` (pasted below):
       --plot             Flag to display the average face [default: False]
       --version          Show version.
 
-Steps (transformer folder)
+Steps (facemorpher folder)
 --------------------------
 
 1. Locator
@@ -146,7 +146,7 @@ Examples - `Being John Malkovich`_
 Create a morphing video between the 2 images:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-| ``> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
+| ``> python facemorpher/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
 | ``--out_video=out.avi``
 
 (out.avi played and recorded as gif)
@@ -157,13 +157,13 @@ Create a morphing video between the 2 images:
 Save the frames to a folder:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-| ``> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
+| ``> python facemorpher/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
 | ``--out_frames=out_folder --num=30``
 
 Plot the frames:
 ^^^^^^^^^^^^^^^^
 
-| ``> python transformer/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
+| ``> python facemorpher/morpher.py --src=alyssa.jpg --dest=john_malkovich.jpg``
 | ``--num=12 --plot``
 
 .. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/plot.png
@@ -174,7 +174,7 @@ Average all face images in a folder:
 
 85 images used
 
-| ``> python transformer/averager.py --images=images --blur --alpha``
+| ``> python facemorpher/averager.py --images=images --blur --alpha``
 | ``--width=220 --height=250``
 
 .. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/average_faces.png
@@ -194,19 +194,19 @@ Additional options are exactly the same as the command line
 
 ::
 
-    import transformer
+    import facemorpher
 
     # To morph, supply an array of face images:
-    transformer.morpher(['image1.png', 'image2.png'], plot=True)
+    facemorpher.morpher(['image1.png', 'image2.png'], plot=True)
 
     # To average, supply an array of face images:
-    transformer.averager(['image1.png', 'image2.png'], plot=True)
+    facemorpher.averager(['image1.png', 'image2.png'], plot=True)
 
 Details
 ------------
--  Data for the haar face classifiers are in the ``transformer\data``
+-  Data for the haar face classifiers are in the ``facemorpher/data``
    folder
--  Stasm binary in ``transformer\bin\stasm_util``. You can build a new
+-  Stasm binary in ``facemorpher/bin/stasm_util``. You can build a new
    stasm binary with the `Stasm 4 build scripts`_.
 
 Documentation

@@ -93,7 +93,7 @@ def morph(src_img, src_points, dest_img, dest_points,
   :param src_img: source image array of x,y face points
   :param dest_img: ndarray destination image
   :param dest_img: destination image array of x,y face points
-  :param video: transformer.videoer.Video object
+  :param video: facemorpher.videoer.Video object
   """
   size = (height, width)
   stall_frames = np.clip(int(fps*0.15), 1, fps)  # Show first & last longer
