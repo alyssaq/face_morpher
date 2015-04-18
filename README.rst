@@ -196,11 +196,15 @@ Additional options are exactly the same as the command line
 
     import facemorpher
 
+    # Get a list of image paths in a folder
+    imgpaths = facemorpher.list_imgpaths('imagefolder')
+
     # To morph, supply an array of face images:
-    facemorpher.morpher(['image1.png', 'image2.png'], plot=True)
+    facemorpher.morpher(imgpaths, plot=True)
 
     # To average, supply an array of face images:
     facemorpher.averager(['image1.png', 'image2.png'], plot=True)
+
 
 Details
 ------------
@@ -223,7 +227,6 @@ Build & publish Docs
 
 License
 -------
-
 `MIT`_
 
 .. _Being John Malkovich: http://www.rottentomatoes.com/m/being_john_malkovich

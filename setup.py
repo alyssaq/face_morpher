@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
   name='facemorpher',
-  version='0.0.9-dev',
+  version='1.0.1',
   author='Alyssa Quek',
   author_email='alyssaquek@gmail.com',
   description=('Warp, morph and average human faces!'),
