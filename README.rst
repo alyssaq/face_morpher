@@ -194,12 +194,13 @@ Additional options are exactly the same as the command line
 
 ::
 
-    $ ipython
-    In[1]: import transformer
+    import transformer
+
     # To morph, supply an array of face images:
-    In[2]: transformer.morpher(['image1.png', 'image2.png'], plot=True)
+    transformer.morpher(['image1.png', 'image2.png'], plot=True)
+
     # To average, supply an array of face images:
-    In[2]: transformer.averager(['image1.png', 'image2.png'], plot=True)
+    transformer.averager(['image1.png', 'image2.png'], plot=True)
 
 Details
 ------------
