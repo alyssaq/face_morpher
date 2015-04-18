@@ -35,8 +35,6 @@ class Video(object):
     for i in xrange(num_times):
       self.video.write(frame)
       self.counter += 1
-    #if self.counter == self.num_frames:
-    #  self.end()
 
   @check_write_video
   def end(self):
