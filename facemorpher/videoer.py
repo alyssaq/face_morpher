@@ -16,13 +16,13 @@ def check_write_video(func):
 
 class Video(object):
   def __init__(self, filename, fps, w, h):
-    fourcc = cv2.cv.FOURCC('m', 'p', '4', 'v')
     self.filename = filename
     self.counter = 0
 
     if filename is None:
       self.video = None
     else:
+      fourcc = cv2.cv.FOURCC('m', 'p', '4', 'v')
       self.video = cv2.VideoWriter(filename, fourcc, fps, (w, h), True)
 
   @check_write_video
