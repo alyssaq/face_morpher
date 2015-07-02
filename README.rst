@@ -32,13 +32,13 @@ Morph from a source to destination image:
 
 ::
 
-    python facemorpher/morpher.py --src=<src_imgpath> --dest=<dest_imgpath>
+    python facemorpher/morpher.py --src=<src_imgpath> --dest=<dest_imgpath> --plot
 
 Morph through a series of images in a folder:
 
 ::
 
-    python facemorpher/morpher.py --images=<folder>
+    python facemorpher/morpher.py --images=<folder> --out_video=out.avi
 
 All options listed in ``morpher.py`` (pasted below):
 
@@ -76,7 +76,7 @@ Average faces from all images in a folder:
 
 ::
 
-    python facemorpher/averager.py --images=<images_folder>
+    python facemorpher/averager.py --images=<images_folder> --out=average.png
 
 All options listed in ``averager.py`` (pasted below):
 
