@@ -12,12 +12,12 @@ Requirements
 -  Install `OpenCV`_: `Mac installation steps`_
 -  ``pip install -r requirements.txt``
 
-Either use as:
+Either:
 
--  `Local command-line utility`_
--  `pip library`_
+-  `Use as local command-line utility`_
+-  `Use as pip library`_
 
-.. _`Local command-line utility`:
+.. _`Use as local command-line utility`:
 
 Use as local command-line utility
 ---------------------------------
@@ -180,9 +180,9 @@ Average all face images in a folder:
 .. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/average_faces.png
    :alt: average\_faces
 
-.. _`pip library`:
+.. _`Use as pip library`:
 
-Use as library
+Use as pip library
 ---------------------------------
 ::
 
