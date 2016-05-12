@@ -43,7 +43,7 @@ class Plotter(object):
 
     if not os.path.exists(folder):
       os.makedirs(folder)
-    self.filepath = os.path.join(folder, 'frame{0}.png')
+    self.filepath = os.path.join(folder, 'frame{0:03d}.png')
 
   @check_do_plot
   def plot_one(self, img, save=False):
