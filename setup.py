@@ -7,7 +7,7 @@ setup(
   author_email='alyssaquek@gmail.com',
   description=('Warp, morph and average human faces!'),
   packages=['facemorpher'],
-  package_data={'facemorpher': ['data/*.xml', 'bin/stasm_util']},
+  package_data={'facemorpher': ['data/*.xml', 'bin/stasm_util_osx', 'bin/stasm_linux']},
   data_files=[('readme', ['README.rst'])],
   keywords='face morphing, averaging, warping',
   url='https://github.com/alyssaq/face_morpher',
