@@ -2,3 +2,4 @@ numpy
 scipy
 matplotlib
 docopt
+Pillow
