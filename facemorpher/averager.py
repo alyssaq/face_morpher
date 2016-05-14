@@ -67,12 +67,10 @@ def averager(imgpaths, width=500, height=600, alpha=False,
   num_images = len(images)
   result_images = np.zeros(images[0].shape, np.float32)
   for i in xrange(num_images):
-    print '{0} of {1}'.format(i+1, num_images)
     result_images += warper.warp_image(images[i], point_set[i],
                                        ave_points, size, np.float32)
 
   result_image = np.uint8(result_images / num_images)
-  print 'Processed {0} faces'.format(num_images)
 
   mask = blender.mask_from_points(size, ave_points)
   if blur_edges:
