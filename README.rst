@@ -6,6 +6,7 @@ Face Morpher
   none is detected.
 
 Built with Python, OpenCV, Numpy, Scipy, Stasm.
+
 Supports Python 2.7 / Python 3+ and OpenCV 2.4.9 / OpenCV 3.0
 
 Requirements
