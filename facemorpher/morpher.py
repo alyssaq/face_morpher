@@ -56,7 +56,7 @@ def load_image_points(path, size):
   points = locator.face_points(path)
 
   if len(points) == 0:
-    print 'No face in %s' % path
+    print('No face in %s' % path)
     return None, None
   else:
     return aligner.resize_align(img, points, size)
@@ -65,7 +65,7 @@ def load_valid_image_points(imgpaths, size):
   for path in imgpaths:
     img, points = load_image_points(path, size)
     if img is not None:
-      print path
+      print(path)
       yield (img, points)
 
 def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
@@ -127,7 +127,7 @@ def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
   """
   video = videoer.Video(out_video, fps, width, height)
   images_points_gen = load_valid_image_points(imgpaths, (height, width))
-  src_img, src_points = images_points_gen.next()
+  src_img, src_points = next(images_points_gen)
   for dest_img, dest_points in images_points_gen:
     morph(src_img, src_points, dest_img, dest_points, video,
           width, height, num_frames, fps, out_frames, out_video, alpha, plot)

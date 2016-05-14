@@ -4,6 +4,7 @@ Create a video with image frames
 
 import cv2
 import numpy as np
+import cvver
 
 def check_write_video(func):
   def inner(self, *args, **kwargs):
@@ -22,7 +23,9 @@ class Video(object):
     if filename is None:
       self.video = None
     else:
-      fourcc = cv2.cv.FOURCC('m', 'p', '4', 'v')
+      fourcc_func = cv2.cv.FOURCC if cvver.is_cv2() else cv2.VideoWriter_fourcc
+      fourcc = fourcc_func('m', 'p', '4', 'v')
+
       self.video = cv2.VideoWriter(filename, fourcc, fps, (w, h), True)
 
   @check_write_video
@@ -38,5 +41,5 @@ class Video(object):
 
   @check_write_video
   def end(self):
-    print self.filename, 'saved'
+    print(self.filename + ' saved')
     self.video.release()

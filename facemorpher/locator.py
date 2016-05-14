@@ -5,8 +5,16 @@ Locate face points
 import cv2
 import numpy as np
 import subprocess
+import sys
 import os.path as path
-from sys import platform as _platform
+import cvver
+
+# Stasm util binary in `bin` folder available for these platforms
+SUPPORTED_PLATFORMS = {
+  'linux': 'linux',
+  'linux2': 'linux',
+  'darwin': 'osx'
+}
 
 def boundary_points(points):
   """ Produce additional boundary points
@@ -29,20 +37,22 @@ def face_points(imgpath, add_boundary_points=True):
   :returns: Array of x,y face points. Empty array if no face found
   """
   directory = path.dirname(path.realpath(__file__))
-  stasm_postfix = ''
-  if _platform == "linux" or _platform == "linux2":
-    stasm_postfix = '_linux'
-  elif _platform == "darwin":
-    stasm_postfix = '_osx'
-  elif _platform == "win32":
-    print "There is currently no Windows version of stasm_util in this repository."
-    print "You can try building and adding 'stasm_util_windows' to the 'bin' folder."
+  stasm_platform = SUPPORTED_PLATFORMS.get(sys.platform)
+  cv_major = cvver.major()
+
+  if stasm_platform is None:
+    print(sys.platform + ' version of stasm_util is currently not supported.')
+    print('You can try building `stasm_util_{0}_cv{1}` and add to `bin`'.format(
+      sys.platform, cv_major))
     sys.exit()
 
-  stasm_path = path.join(directory, 'bin/stasm_util{0}'.format(stasm_postfix))
+  stasm_path = path.join(
+    directory,
+    'bin/stasm_util_{0}_cv{1}'.format(stasm_platform, cv_major)
+  )
   data_folder = path.join(directory, 'data')
-  command = '"{0}" -f "{1}" "{2}"'.format(stasm_path, data_folder, imgpath)
-  s = subprocess.check_output(command, shell=True)
+  command = [stasm_path, '-f', data_folder, imgpath]
+  s = subprocess.check_output(command, universal_newlines=True)
   if s.startswith('No face found'):
     return []
   else:

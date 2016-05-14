@@ -5,7 +5,8 @@ Face Morpher
 | Scripts will automatically detect frontal faces and skip images if
   none is detected.
 
-Built with Python 2.7, OpenCV, Numpy, Scipy, Stasm.
+Built with Python, OpenCV, Numpy, Scipy, Stasm.
+Supports Python 2.7 / Python 3+ and OpenCV 2.4.9 / OpenCV 3.0
 
 Requirements
 --------------

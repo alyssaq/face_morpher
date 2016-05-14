@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.spatial as spatial
+from builtins import range
 
 def bilinear_interpolate(img, coords):
   """ Interpolates over every image channel
@@ -35,8 +36,8 @@ def grid_coordinates(points):
   xmax = np.max(points[:, 0]) + 1
   ymin = np.min(points[:, 1])
   ymax = np.max(points[:, 1]) + 1
-  return np.asarray([(x, y) for y in xrange(ymin, ymax)
-                     for x in xrange(xmin, xmax)], np.uint32)
+  return np.asarray([(x, y) for y in range(ymin, ymax)
+                     for x in range(xmin, xmax)], np.uint32)
 
 def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
   """
@@ -47,7 +48,7 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
   # indices to vertices. -1 if pixel is not in any triangle
   roi_tri_indices = delaunay.find_simplex(roi_coords)
 
-  for simplex_index in xrange(len(delaunay.simplices)):
+  for simplex_index in range(len(delaunay.simplices)):
     coords = roi_coords[roi_tri_indices == simplex_index]
     num_coords = len(coords)
     out_coords = np.dot(tri_affines[simplex_index],
@@ -118,7 +119,6 @@ def test_local():
   dst_img1 = warp_image(src_img, src_points, result_points, size)
   dst_img2 = warp_image(base_img, base_points, result_points, size)
 
-  print 'blending'
   import blender
   ave = blender.weighted_average(dst_img1, dst_img2, 0.6)
   mask = blender.mask_from_points(size, result_points)

@@ -12,10 +12,10 @@ def check_do_plot(func):
     if not self.do_plot or self.filepath is None:
       pass
 
-    if 'save' in args and self.filepath is not None:
+    if len(args) > 1 and args[1] is 'save' and self.filepath is not None:
       filename = self.filepath.format(self.counter - 1)
       mpimg.imsave(filename, args[0])
-      print filename
+      print(filename)
     if self.do_plot:
       func(self, *args, **kwargs)
     self.counter += 1
