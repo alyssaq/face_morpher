@@ -232,7 +232,7 @@ License
 `MIT`_
 
 .. _Being John Malkovich: http://www.rottentomatoes.com/m/being_john_malkovich
-.. _Mac installation steps: http://scriptogr.am/alyssa/post/installing-opencv-on-mac-osx-with-homebrew
+.. _Mac installation steps: https://gist.github.com/alyssaq/f60393545173379e0f3f#file-4-opencv3-with-python3-md
 .. _MIT: http://alyssaq.github.io/mit-license/
 .. _OpenCV: http://opencv.org
 .. _Stasm 4 build scripts: https://github.com/alyssaq/stasm_build
