@@ -1,3 +1,4 @@
+from builtins import range
 import cv2
 import numpy as np
 import scipy.sparse
@@ -20,7 +21,7 @@ def apply_mask(img, mask):
   """
   masked_img = np.copy(img)
   num_channels = 3
-  for c in xrange(num_channels):
+  for c in range(num_channels):
     masked_img[..., c] = img[..., c] * (mask / 255)
 
   return masked_img
@@ -38,7 +39,7 @@ def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
   mask = mask / 255.0
 
   result_img = np.empty(src_img.shape, np.uint8)
-  for i in xrange(3):
+  for i in range(3):
     result_img[..., i] = src_img[..., i] * mask + dest_img[..., i] * (1-mask)
 
   return result_img

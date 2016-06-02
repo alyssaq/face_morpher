@@ -20,6 +20,7 @@
 """
 
 from docopt import docopt
+from builtins import range
 import os
 import cv2
 import numpy as np
@@ -66,7 +67,7 @@ def averager(imgpaths, width=500, height=600, alpha=False,
   ave_points = locator.average_points(point_set)
   num_images = len(images)
   result_images = np.zeros(images[0].shape, np.float32)
-  for i in xrange(num_images):
+  for i in range(num_images):
     result_images += warper.warp_image(images[i], point_set[i],
                                        ave_points, size, np.float32)
 

@@ -2,6 +2,7 @@
 Create a video with image frames
 """
 
+from builtins import range
 import cv2
 import numpy as np
 import cvver
@@ -35,7 +36,7 @@ class Video(object):
       #  OpenCV channels are gbr so we need to swap scipy's rgb chs
       frame[..., 0], frame[..., 2] = img[..., 2], img[..., 0]
 
-    for i in xrange(num_times):
+    for i in range(num_times):
       self.video.write(frame)
       self.counter += 1
 
