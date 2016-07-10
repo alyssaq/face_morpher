@@ -30,8 +30,8 @@ def roi_coordinates(rect, size, scale):
   new_height, new_width = size
   mid_x = int((rectx + rectw/2) * scale)
   mid_y = int((recty + recth/2) * scale)
-  roi_x = mid_x - new_width/2
-  roi_y = mid_y - new_height/2
+  roi_x = mid_x - int(new_width/2)
+  roi_y = mid_y - int(new_height/2)
 
   roi_x, border_x = positive_cap(roi_x)
   roi_y, border_y = positive_cap(roi_y)
