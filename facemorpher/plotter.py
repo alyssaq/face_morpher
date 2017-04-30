@@ -2,7 +2,7 @@
 Plot and save images
 """
 
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 import os.path

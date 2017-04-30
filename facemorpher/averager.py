@@ -25,7 +25,7 @@ import os
 import cv2
 import numpy as np
 import scipy.ndimage
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import locator
 import aligner
