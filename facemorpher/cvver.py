@@ -7,5 +7,5 @@ def is_cv3():
   return cv2.__version__.startswith('3.')
 
 def major():
-  (major, minor, _) = cv2.__version__.split('.')
+  (major, minor) = cv2.__version__.split('.')[:2]
   return major
