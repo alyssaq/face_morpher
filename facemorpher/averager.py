@@ -44,13 +44,17 @@ def sharpen(img):
   return cv2.addWeighted(img, 1.4, blured, -0.4, 0)
 
 def load_image_points(path, size):
-  img = scipy.ndimage.imread(path)[..., :3]
-  points = locator.face_points(path)
+  try:
+    img = scipy.ndimage.imread(path)[..., :3]
+    points = locator.face_points(path)
 
-  if len(points) == 0:
-    return None, None
-  else:
-    return aligner.resize_align(img, points, size)
+    if len(points) == 0:
+      return None, None
+    else:
+      return aligner.resize_align(img, points, size)
+  except Exception as e:
+      print path
+      return None, None
 
 def averager(imgpaths, width=500, height=600, alpha=False,
              blur_edges=False, out_filename='result.png', plot=False):
