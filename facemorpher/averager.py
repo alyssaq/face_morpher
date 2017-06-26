@@ -54,6 +54,7 @@ def load_image_points(path, size):
 
 def averager(imgpaths, width=500, height=600, alpha=False,
              blur_edges=False, out_filename='result.png', plot=False):
+
   size = (height, width)
 
   images = []
@@ -63,6 +64,10 @@ def averager(imgpaths, width=500, height=600, alpha=False,
     if img is not None:
       images.append(img)
       point_set.append(points)
+
+  if len(images) == 0:
+    raise FileNotFoundError('Could not find any valid images.' +
+                            ' Supported formats are .jpg, .png, .jpeg')
 
   ave_points = locator.average_points(point_set)
   num_images = len(images)
@@ -86,8 +91,12 @@ def averager(imgpaths, width=500, height=600, alpha=False,
     plt.imshow(result_image)
     plt.show()
 
+
 if __name__ == "__main__":
   args = docopt(__doc__, version='Face Averager 1.0')
-  averager(list_imgpaths(args['--images']), int(args['--width']),
-           int(args['--height']), args['--alpha'], args['--blur'],
-           args['--out'], args['--plot'])
+  try:
+    averager(list_imgpaths(args['--images']), int(args['--width']),
+             int(args['--height']), args['--alpha'], args['--blur'],
+             args['--out'], args['--plot'])
+  except Exception as e:
+    print(e)
