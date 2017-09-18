@@ -89,17 +89,19 @@ All options listed in ``averager.py`` (pasted below):
     Usage:
       averager.py --images=<images_folder> [--blur] [--alpha] [--plot]
                 [--width=<width>] [--height=<height>] [--out=<filename>]
+                [--destimg=<filename>]
 
     Options:
-      -h, --help         Show this screen.
-      --images=<folder>  Folder to images (.jpg, .jpeg, .png)
-      --blur             Flag to blur edges of image [default: False]
-      --alpha            Flag to save with transparent background [default: False]
-      --width=<width>    Custom width of the images/video [default: 500]
-      --height=<height>  Custom height of the images/video [default: 600]
-      --out=<filename>   Filename to save the average face [default: result.png]
-      --plot             Flag to display the average face [default: False]
-      --version          Show version.
+      -h, --help             Show this screen.
+      --images=<folder>      Folder to images (.jpg, .jpeg, .png)
+      --blur                 Flag to blur edges of image [default: False]
+      --alpha                Flag to save with transparent background [default: False]
+      --width=<width>        Custom width of the images/video [default: 500]
+      --height=<height>      Custom height of the images/video [default: 600]
+      --out=<filename>       Filename to save the average face [default: result.png]
+      --destimg=<filename>   Destination face image to overlay average face
+      --plot                 Flag to display the average face [default: False]
+      --version              Show version.
 
 Steps (facemorpher folder)
 --------------------------
