@@ -134,6 +134,7 @@ def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
     src_img, src_points = dest_img, dest_points
   video.end()
 
+
 if __name__ == "__main__":
   args = docopt(__doc__, version='Face Morpher 1.0')
   verify_args(args)
