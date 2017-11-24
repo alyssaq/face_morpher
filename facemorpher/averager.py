@@ -28,10 +28,10 @@ import numpy as np
 import scipy.ndimage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import locator
-import aligner
-import warper
-import blender
+from . import locator
+from . import aligner
+from . import warper
+from . import blender
 
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):

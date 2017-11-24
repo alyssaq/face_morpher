@@ -31,12 +31,12 @@ from docopt import docopt
 import scipy.ndimage
 import numpy as np
 import os
-import locator
-import aligner
-import warper
-import blender
-import plotter
-import videoer
+from . import locator
+from . import aligner
+from . import warper
+from . import blender
+from . import plotter
+from . import videoer
 
 def verify_args(args):
   if args['--images'] is None:
