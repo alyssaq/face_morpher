@@ -213,6 +213,7 @@ Additional options are exactly the same as the command line
 Once pip installed, 2 binaries are also available as a command line utility:
 
 ::
+
     $ facemorpher --src=<src_imgpath> --dest=<dest_imgpath> --plot
     $ faceaverager --images=<images_folder> --plot
 
