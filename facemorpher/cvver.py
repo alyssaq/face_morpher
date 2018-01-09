@@ -8,4 +8,4 @@ def is_cv3():
 
 def major():
   (major, minor) = cv2.__version__.split('.')[:2]
-  return major
+  return '.'.join([major, minor])
