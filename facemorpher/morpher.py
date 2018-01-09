@@ -26,17 +26,17 @@
     --plot                  Flag to plot images [default: False]
     --version               Show version.
 """
-
 from docopt import docopt
 import scipy.ndimage
 import numpy as np
 import os
-import locator
-import aligner
-import warper
-import blender
-import plotter
-import videoer
+
+from facemorpher import locator
+from facemorpher import aligner
+from facemorpher import warper
+from facemorpher import blender
+from facemorpher import plotter
+from facemorpher import videoer
 
 def verify_args(args):
   if args['--images'] is None:
@@ -134,8 +134,7 @@ def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
     src_img, src_points = dest_img, dest_points
   video.end()
 
-
-if __name__ == "__main__":
+def main():
   args = docopt(__doc__, version='Face Morpher 1.0')
   verify_args(args)
 
@@ -144,3 +143,6 @@ if __name__ == "__main__":
           int(args['--num']), int(args['--fps']),
           args['--out_frames'], args['--out_video'],
           args['--alpha'], args['--plot'])
+
+if __name__ == "__main__":
+  main()

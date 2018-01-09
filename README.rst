@@ -210,6 +210,13 @@ Additional options are exactly the same as the command line
     facemorpher.averager(['image1.png', 'image2.png'], plot=True)
 
 
+Once pip installed, 2 binaries are also available as a command line utility:
+
+::
+    $ facemorpher --src=<src_imgpath> --dest=<dest_imgpath> --plot
+    $ faceaverager --images=<images_folder> --plot
+
+
 Details
 ------------
 -  Data for the haar face classifiers are in the ``facemorpher/data``

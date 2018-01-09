@@ -5,7 +5,8 @@ Create a video with image frames
 from builtins import range
 import cv2
 import numpy as np
-import cvver
+
+from facemorpher import cvver
 
 def check_write_video(func):
   def inner(self, *args, **kwargs):

@@ -28,10 +28,11 @@ import numpy as np
 import scipy.ndimage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import locator
-import aligner
-import warper
-import blender
+
+from facemorpher import locator
+from facemorpher import aligner
+from facemorpher import warper
+from facemorpher import blender
 
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):
@@ -102,8 +103,7 @@ def averager(imgpaths, dest_filename=None, width=500, height=600, alpha=False,
     plt.imshow(dest_img)
     plt.show()
 
-
-if __name__ == "__main__":
+def main():
   args = docopt(__doc__, version='Face Averager 1.0')
   try:
     averager(list_imgpaths(args['--images']), args['--destimg'],
@@ -111,3 +111,6 @@ if __name__ == "__main__":
              args['--alpha'], args['--blur'], args['--out'], args['--plot'])
   except Exception as e:
     print(e)
+
+if __name__ == "__main__":
+  main()

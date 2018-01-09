@@ -1,7 +1,6 @@
 """
 Face Morpher module init code
 """
-
 from .morpher import morpher, list_imgpaths
 from .averager import averager
 
