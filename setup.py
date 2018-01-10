@@ -16,7 +16,7 @@ class OverrideInstall(install):
 
 setup(
   name='facemorpher',
-  version='3.2.0',
+  version='3.3.2',
   author='Alyssa Quek',
   author_email='alyssaquek@gmail.com',
   description=('Warp, morph and average human faces!'),
@@ -31,6 +31,13 @@ setup(
     'bin/stasm_util_linux_cv3.2',
     'bin/stasm_util_linux_cv3.4'
   ]},
+  install_requires=[
+    'docopt',
+    'numpy',
+    'scipy',
+    'matplotlib',
+    'Pillow'
+  ],
   cmdclass={'install': OverrideInstall},
   entry_points={'console_scripts': [
       'facemorpher=facemorpher.morpher:main',
