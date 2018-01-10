@@ -16,7 +16,7 @@ class OverrideInstall(install):
 
 setup(
   name='facemorpher',
-  version='3.1.0',
+  version='3.2.0',
   author='Alyssa Quek',
   author_email='alyssaquek@gmail.com',
   description=('Warp, morph and average human faces!'),
@@ -26,10 +26,10 @@ setup(
   packages=find_packages(),
   package_data={'facemorpher': [
     'data/*.xml',
-    'bin/stasm_util_osx_cv2',
-    'bin/stasm_util_osx_cv3',
-    'bin/stasm_util_linux_cv2',
-    'bin/stasm_util_linux_cv3'
+    'bin/stasm_util_osx_cv3.2',
+    'bin/stasm_util_osx_cv3.4',
+    'bin/stasm_util_linux_cv3.2',
+    'bin/stasm_util_linux_cv3.4'
   ]},
   cmdclass={'install': OverrideInstall},
   entry_points={'console_scripts': [
