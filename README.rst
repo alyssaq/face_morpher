@@ -7,7 +7,7 @@ Face Morpher
 
 Built with Python, OpenCV, Numpy, Scipy, Stasm.
 
-Tested on Python 2.7, Python 3.5+ and OpenCV 3.2, 3.4 on macOS High Sierra
+Supported on Python 2.7, Python 3.5+ and OpenCV 3.2, 3.4 on macOS High Sierra and 64bit Linux
 
 Requirements
 --------------
