@@ -42,7 +42,7 @@ def verify_args(args):
   if args['--images'] is None:
     valid = os.path.isfile(args['--src']) & os.path.isfile(args['--dest'])
     if not valid:
-      print('--src=%s or --dest=%s are not valid images' % (
+      print('--src=%s or --dest=%s file does not exist. Double check the supplied paths' % (
         args['--src'], args['--dest']))
       exit(1)
   else:
