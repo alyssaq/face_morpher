@@ -40,17 +40,17 @@ def face_points(imgpath, add_boundary_points=True):
   directory = path.dirname(path.realpath(__file__))
   stasm_platform = SUPPORTED_PLATFORMS.get(sys.platform)
   cv_major = cvver.major()
-
-  if stasm_platform is None:
-    print(sys.platform + ' version of stasm_util is currently not supported.')
-    print('You can try building `stasm_util_{0}_cv{1}` and add to `bin`'.format(
-      sys.platform, cv_major))
-    sys.exit()
-
   stasm_path = path.join(
     directory,
     'bin/stasm_util_{0}_cv{1}'.format(stasm_platform, cv_major)
   )
+
+  if not path.exists(stasm_path):
+    print(stasm_platform + ' with openCV' + cv_major + ' of stasm_util is currently not supported.')
+    print('You can try building `stasm_util_{0}_cv{1}` and add to `bin`'.format(
+      stasm_platform, cv_major))
+    sys.exit()
+
   data_folder = path.join(directory, 'data')
   command = [stasm_path, '-f', data_folder, imgpath]
   s = subprocess.check_output(command, universal_newlines=True)
