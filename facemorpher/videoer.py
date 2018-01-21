@@ -6,7 +6,6 @@ from builtins import range
 import cv2
 import numpy as np
 
-from facemorpher import cvver
 
 def check_write_video(func):
   def inner(self, *args, **kwargs):
@@ -25,9 +24,7 @@ class Video(object):
     if filename is None:
       self.video = None
     else:
-      fourcc_func = cv2.cv.FOURCC if cvver.is_cv2() else cv2.VideoWriter_fourcc
-      fourcc = fourcc_func('m', 'p', '4', 'v')
-
+      fourcc = cv2.VideoWriter_fourcc(*'MJPG')
       self.video = cv2.VideoWriter(filename, fourcc, fps, (w, h), True)
 
   @check_write_video
