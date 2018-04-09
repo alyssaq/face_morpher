@@ -4,3 +4,4 @@ matplotlib
 docopt
 Pillow
 future
+opencv-python
