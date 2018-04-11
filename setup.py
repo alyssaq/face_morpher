@@ -6,13 +6,12 @@ import os
 # To upload to pypi: python setup.py sdist upload
 class OverrideInstall(install):
   def run(self):
-    uid, gid = 0, 0
-    mode = '0700'
-    install.run(self) # install everything as per usual
+    install.run(self)  # install everything as per usual
     for filepath in self.get_outputs():
       if 'bin/stasm_util' in filepath:
         # make binaries executable
         os.chmod(filepath, 0o755)
+
 
 setup(
   name='facemorpher',

@@ -144,5 +144,6 @@ def main():
           args['--out_frames'], args['--out_video'],
           args['--alpha'], args['--plot'])
 
+
 if __name__ == "__main__":
   main()
