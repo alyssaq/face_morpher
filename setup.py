@@ -36,7 +36,9 @@ setup(
     'numpy',
     'scipy',
     'matplotlib',
-    'Pillow'
+    'Pillow',
+    'future',
+    'opencv-python',
   ],
   cmdclass={'install': OverrideInstall},
   entry_points={'console_scripts': [
