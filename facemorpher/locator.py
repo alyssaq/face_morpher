@@ -10,12 +10,27 @@ import os.path as path
 
 from facemorpher import cvver
 
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor('./facemorpher/data/shape_predictor_68_face_landmarks.dat')
+
 # Stasm util binary in `bin` folder available for these platforms
 SUPPORTED_PLATFORMS = {
   'linux': 'linux',
   'linux2': 'linux',
   'darwin': 'osx'
 }
+
+def shape_to_np(shape, dtype="int"):
+  # initialize the list of (x, y)-coordinates
+  coords = np.zeros((68, 2), dtype=dtype)
+ 
+  # loop over the 68 facial landmarks and convert them
+  # to a 2-tuple of (x, y)-coordinates
+  for i in range(0, 68):
+	coords[i] = (shape.part(i).x, shape.part(i).y)
+ 
+  # return the list of (x, y)-coordinates
+  return coords
 
 def boundary_points(points):
   """ Produce additional boundary points
@@ -63,6 +78,20 @@ def face_points(imgpath, add_boundary_points=True):
       points = np.vstack([points, boundary_points(points)])
 
     return points
+
+# Find 68 face points using dlib
+def face_points_2(image):
+  face_points = []
+  try:
+    rects = detector(image, 1)
+    if rects:
+        # We only take the first found face
+        rect = rects[0]
+        points = predictor(image, rect)
+        points = shape_to_np(points)
+  except:
+    return points
+  return face_points
 
 def average_points(point_set):
   """ Averages a set of face points from images
