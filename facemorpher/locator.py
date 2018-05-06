@@ -9,11 +9,14 @@ import sys
 import os.path as path
 
 from facemorpher import cvver
+FILE_DIR = path.dirname(path.realpath(__file__))
+DATA_DIR = path.join(FILE_DIR, 'data')
+BIN_DIR = path.join(FILE_DIR, 'bin')
 
 try:
   import dlib
   dlib_detector = dlib.get_frontal_face_detector()
-  dlib_predictor = dlib.shape_predictor('./facemorpher/data/shape_predictor_68_face_landmarks.dat')
+  dlib_predictor = dlib.shape_predictor(path.join(DATA_DIR, 'shape_predictor_68_face_landmarks.dat'))
 except:
   pass
 
@@ -45,22 +48,20 @@ def face_points_stasm(imgpath, add_boundary_points=True):
   :param add_boundary_points: bool to add additional boundary points
   :returns: Array of x,y face points. Empty array if no face found
   """
-  directory = path.dirname(path.realpath(__file__))
   stasm_platform = SUPPORTED_PLATFORMS.get(sys.platform)
   cv_major = cvver.major()
   stasm_path = path.join(
-    directory,
-    'bin/stasm_util_{0}_cv{1}'.format(stasm_platform, cv_major)
+    BIN_DIR,
+    'stasm_util_{0}_cv{1}'.format(stasm_platform, cv_major)
   )
 
-  if not path.exists(stasm_path):
+  if not path.exists(stasm_path) and not dlib_detector:
     print(stasm_platform + ' with openCV' + cv_major + ' of stasm_util is currently not supported.')
     print('You can try building `stasm_util_{0}_cv{1}` and add to `bin`'.format(
       stasm_platform, cv_major))
     sys.exit()
 
-  data_folder = path.join(directory, 'data')
-  command = [stasm_path, '-f', data_folder, imgpath]
+  command = [stasm_path, '-f', DATA_DIR, imgpath]
   s = subprocess.check_output(command, universal_newlines=True)
   if s.startswith('No face found'):
     return []
@@ -94,10 +95,10 @@ def face_points_dlib(imgpath, add_boundary_points=True):
         # Add more points inwards and upwards as dlib only detects up to eyebrows
         points = np.vstack([
           points,
-          boundary_points(points, 0.1, -0.05),
-          boundary_points(points, 0.13, -0.09),
-          boundary_points(points, 0.15, -0.14),
-          boundary_points(points, 0.33, -0.2)])
+          boundary_points(points, 0.1, -0.03),
+          boundary_points(points, 0.13, -0.05),
+          boundary_points(points, 0.15, -0.08),
+          boundary_points(points, 0.33, -0.12)])
 
     return points
   except Exception as e:
@@ -111,7 +112,7 @@ def face_points(imgpath, add_boundary_points=True):
   :param add_boundary_points: bool to add additional boundary points
   :returns: Array of x,y face points. Empty array if no face found
   """
-  points = []#face_points_stasm(imgpath, add_boundary_points)
+  points = face_points_stasm(imgpath, add_boundary_points)
   if len(points) == 0:
     points = face_points_dlib(imgpath, add_boundary_points)
   return points
