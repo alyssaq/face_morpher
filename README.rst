@@ -7,17 +7,19 @@ Face Morpher
 
 Built with Python, OpenCV, Numpy, Scipy, Stasm.
 
-Supported on Python 2.7, Python 3.5+ and OpenCV 3.2, 3.4 on macOS High Sierra and 64bit Linux
+Supported on Python 2.7, Python 3.6+ and OpenCV 3.4.1 on macOS High Sierra and 64bit Linux
 
 Requirements
 --------------
 -  Install `OpenCV`_: `Mac installation steps`_
+-  Note: OpenCV must be installed either from `Homebrew`_ or `source`_ as stasm requires the library files.
 -  ``pip install -r requirements.txt``
 
 Either:
 
 -  `Use as local command-line utility`_
 -  `Use as pip library`_
+-  `Try out in a docker container`_
 
 .. _`Use as local command-line utility`:
 
@@ -217,6 +219,15 @@ Once pip installed, 2 binaries are also available as a command line utility:
     $ facemorpher --src=<src_imgpath> --dest=<dest_imgpath> --plot
     $ faceaverager --images=<images_folder> --plot
 
+Try out in a docker container
+---------------------------------
+::
+Mount local folder to `/images` in docker container, run it and enter a bash session.
+--rm removes the container when you close it.
+| ``$ docker run -v  /Users/alyssa/Desktop/images:/images --name py3 --rm -it jjanzic/docker-python3-opencv bash``
+Once you're in the container, install ``facemorpher`` and run the commands as listed above
+| ``root@0dad0912ebbe:/# pip install facemorpher``
+| ``root@0dad0912ebbe:/# facemorpher --src=<img1> --dest=<img2> --plot``
 
 Details
 ------------
@@ -243,7 +254,9 @@ License
 
 .. _Being John Malkovich: http://www.rottentomatoes.com/m/being_john_malkovich
 .. _Mac installation steps: https://gist.github.com/alyssaq/f60393545173379e0f3f#file-4-opencv3-with-python3-md
-.. _MIT: http://alyssaq.github.io/mit-license/
+.. _MIT: http://alyssaq.github.io/mit-license
 .. _OpenCV: http://opencv.org
+.. _Homebrew: https://brew.sh
+.. _source: https://github.com/opencv/opencv
 .. _Stasm 4 build scripts: https://github.com/alyssaq/stasm_build
 .. _stasm: http://www.milbo.users.sonic.net/stasm
