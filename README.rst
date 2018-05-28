@@ -222,6 +222,7 @@ Once pip installed, 2 binaries are also available as a command line utility:
 Try out in a docker container
 ---------------------------------
 ::
+
 Mount local folder to `/images` in docker container, run it and enter a bash session.
 --rm removes the container when you close it.
 | ``$ docker run -v  /Users/alyssa/Desktop/images:/images --name py3 --rm -it jjanzic/docker-python3-opencv bash``
