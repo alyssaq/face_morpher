@@ -221,14 +221,17 @@ Once pip installed, 2 binaries are also available as a command line utility:
 
 Try out in a docker container
 ---------------------------------
-::
-
 Mount local folder to `/images` in docker container, run it and enter a bash session.
 --rm removes the container when you close it.
-| ``$ docker run -v  /Users/alyssa/Desktop/images:/images --name py3 --rm -it jjanzic/docker-python3-opencv bash``
-Once you're in the container, install ``facemorpher`` and run the commands as listed above
-| ``root@0dad0912ebbe:/# pip install facemorpher``
-| ``root@0dad0912ebbe:/# facemorpher --src=<img1> --dest=<img2> --plot``
+::
+
+    $ docker run -v  /Users/alyssa/Desktop/images:/images --name py3 --rm -it jjanzic/docker-python3-opencv bash
+
+Once you're in the container, install ``facemorpher`` and try the examples listed above
+::
+
+    root@0dad0912ebbe:/# pip install facemorpher
+    root@0dad0912ebbe:/# facemorpher --src=<img1> --dest=<img2> --plot
 
 Details
 ------------
