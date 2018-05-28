@@ -3,7 +3,7 @@ from setuptools.command.install import install
 import os
 
 # To test locally: python setup.py install
-# To upload to pypi: python setup.py sdist upload
+# To upload to pypi: python setup.py sdist bdist_wheel upload
 class OverrideInstall(install):
   def run(self):
     install.run(self)  # install everything as per usual
@@ -15,7 +15,7 @@ class OverrideInstall(install):
 
 setup(
   name='facemorpher',
-  version='3.4.2',
+  version='4.0.0',
   author='Alyssa Quek',
   author_email='alyssaquek@gmail.com',
   description=('Warp, morph and average human faces!'),
@@ -25,10 +25,8 @@ setup(
   packages=find_packages(),
   package_data={'facemorpher': [
     'data/*.xml',
-    'bin/stasm_util_osx_cv3.2',
-    'bin/stasm_util_osx_cv3.4',
-    'bin/stasm_util_linux_cv3.2',
-    'bin/stasm_util_linux_cv3.4'
+    'bin/stasm_util_osx_cv3.4.1',
+    'bin/stasm_util_linux_cv3.4.1'
   ]},
   install_requires=[
     'docopt',
@@ -36,8 +34,7 @@ setup(
     'scipy',
     'matplotlib',
     'Pillow',
-    'future',
-    'opencv-python',
+    'future'
   ],
   cmdclass={'install': OverrideInstall},
   entry_points={'console_scripts': [

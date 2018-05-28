@@ -6,6 +6,6 @@ def is_cv2():
 def is_cv3():
   return cv2.__version__.startswith('3.')
 
-def major():
-  (major, minor) = cv2.__version__.split('.')[:2]
-  return '.'.join([major, minor])
+def version():
+  (major, minor, patch) = cv2.__version__.split('.')[:3]
+  return '.'.join([major, minor, patch])
