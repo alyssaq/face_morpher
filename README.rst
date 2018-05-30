@@ -7,7 +7,8 @@ Face Morpher
 
 Built with Python, OpenCV, Numpy, Scipy, Stasm.
 
-Supported on Python 2.7, Python 3.6+ and OpenCV 3.4.1 on macOS High Sierra and 64bit Linux
+| Supported on Python 2.7, Python 3.6+ and OpenCV >= 3 (tested with OpenCV 3.4.1)
+| Tested on macOS High Sierra and 64bit Linux (dockerized).
 
 Requirements
 --------------
@@ -235,10 +236,7 @@ Once you're in the container, install ``facemorpher`` and try the examples liste
 
 Details
 ------------
--  Data for the haar face classifiers are in the ``facemorpher/data``
-   folder
--  Stasm binary in ``facemorpher/bin/stasm_util``. You can build a new
-   stasm binary with the `Stasm 4 build scripts`_.
+-  Face points are detected with stasm. This library relies on the `python wrapper around stasm`_.
 
 Documentation
 -------------
@@ -262,5 +260,5 @@ License
 .. _OpenCV: http://opencv.org
 .. _Homebrew: https://brew.sh
 .. _source: https://github.com/opencv/opencv
-.. _Stasm 4 build scripts: https://github.com/alyssaq/stasm_build
+.. _python wrapper around stasm: https://github.com/alyssaq/stasm
 .. _stasm: http://www.milbo.users.sonic.net/stasm
