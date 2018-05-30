@@ -93,7 +93,7 @@ def warp_image(src_img, src_points, dest_points, dest_shape, dtype=np.uint8):
 
 def test_local():
   from functools import partial
-  import scipy.ndimage
+  import cv2
   import scipy.misc
   import locator
   import aligner
@@ -103,11 +103,11 @@ def test_local():
   face_points_func = partial(locator.face_points, '../data')
   base_path = '../females/Screenshot 2015-03-04 17.11.12.png'
   src_path = '../females/BlDmB5QCYAAY8iw.jpg'
-  src_img = scipy.ndimage.imread(src_path)[:, :, :3]
+  src_img = cv2.imread(src_path)
 
   # Define control points for warps
   src_points = face_points_func(src_path)
-  base_img = scipy.ndimage.imread(base_path)[:, :, :3]
+  base_img = cv2.imread(base_path)
   base_points = face_points_func(base_path)
 
   size = (600, 500)

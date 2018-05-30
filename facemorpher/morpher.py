@@ -27,9 +27,9 @@
     --version               Show version.
 """
 from docopt import docopt
-import scipy.ndimage
-import numpy as np
 import os
+import numpy as np
+import cv2
 
 from facemorpher import locator
 from facemorpher import aligner
@@ -52,8 +52,8 @@ def verify_args(args):
       exit(1)
 
 def load_image_points(path, size):
-  img = scipy.ndimage.imread(path)[..., :3]
-  points = locator.face_points(path)
+  img = cv2.imread(path)
+  points = locator.face_points(img)
 
   if len(points) == 0:
     print('No face in %s' % path)
@@ -97,11 +97,11 @@ def morph(src_img, src_points, dest_img, dest_points,
   """
   size = (height, width)
   stall_frames = np.clip(int(fps*0.15), 1, fps)  # Show first & last longer
-  plt = plotter.Plotter(plot, num_images=num_frames, folder=out_frames)
+  plt = plotter.Plotter(plot, num_images=num_frames, out_folder=out_frames)
   num_frames -= (stall_frames * 2)  # No need to process src and dest image
 
   plt.plot_one(src_img)
-  video.write(src_img, stall_frames)
+  video.write(src_img, 1)
 
   # Produce morph frames!
   for percent in np.linspace(1, 0, num=num_frames):
@@ -110,12 +110,13 @@ def morph(src_img, src_points, dest_img, dest_points,
     end_face = warper.warp_image(dest_img, dest_points, points, size)
     average_face = blender.weighted_average(src_face, end_face, percent)
     average_face = alpha_image(average_face, points) if alpha else average_face
-    plt.plot_one(average_face, 'save')
+
+    plt.plot_one(average_face)
+    plt.save(average_face)
     video.write(average_face)
 
   plt.plot_one(dest_img)
   video.write(dest_img, stall_frames)
-
   plt.show()
 
 def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,

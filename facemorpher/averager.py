@@ -25,7 +25,6 @@ from builtins import range
 import os
 import cv2
 import numpy as np
-import scipy.ndimage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
@@ -33,6 +32,7 @@ from facemorpher import locator
 from facemorpher import aligner
 from facemorpher import warper
 from facemorpher import blender
+from facemorpher import plotter
 
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):
@@ -46,8 +46,8 @@ def sharpen(img):
   return cv2.addWeighted(img, 1.4, blured, -0.4, 0)
 
 def load_image_points(path, size):
-  img = scipy.ndimage.imread(path)[..., :3]
-  points = locator.face_points(path)
+  img = cv2.imread(path)
+  points = locator.face_points(img)
 
   if len(points) == 0:
     print('No face in %s' % path)
@@ -96,12 +96,12 @@ def averager(imgpaths, dest_filename=None, width=500, height=600, alpha=False,
     mask = cv2.blur(mask, (blur_radius, blur_radius))
   if alpha:
     dest_img = np.dstack((dest_img, mask))
-  mpimg.imsave(out_filename, dest_img)
 
-  if plot:
-    plt.axis('off')
-    plt.imshow(dest_img)
-    plt.show()
+  print('Averaged {} images'.format(num_images))
+  plt = plotter.Plotter(plot, num_images=1, out_filename=out_filename)
+  plt.save(dest_img)
+  plt.plot_one(dest_img)
+  plt.show()
 
 def main():
   args = docopt(__doc__, version='Face Averager 1.0')

@@ -4,29 +4,38 @@ Plot and save images
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import numpy as np
 import os.path
+import numpy as np
+import cv2
+
+def bgr2rgb(img):
+  # OpenCV's BGR to RGB
+  rgb = np.copy(img)
+  rgb[..., 0], rgb[..., 2] = img[..., 2], img[..., 0]
+  return rgb
 
 def check_do_plot(func):
   def inner(self, *args, **kwargs):
-    if not self.do_plot or self.filepath is None:
-      pass
-
-    if len(args) > 1 and args[1] is 'save' and self.filepath is not None:
-      filename = self.filepath.format(self.counter - 1)
-      mpimg.imsave(filename, args[0])
-      print(filename)
     if self.do_plot:
       func(self, *args, **kwargs)
-    self.counter += 1
+
+  return inner
+
+def check_do_save(func):
+  def inner(self, *args, **kwargs):
+    if self.do_save:
+      func(self, *args, **kwargs)
 
   return inner
 
 class Plotter(object):
-  def __init__(self, plot=True, rows=0, cols=0, num_images=0, folder=None):
-    self.counter = 1
+  def __init__(self, plot=True, rows=0, cols=0, num_images=0, out_folder=None, out_filename=None):
+    self.save_counter = 1
+    self.plot_counter = 1
     self.do_plot = plot
-    self.set_filepath(folder)
+    self.do_save = out_filename is not None
+    self.out_filename = out_filename
+    self.set_filepath(out_folder)
 
     if (rows + cols) == 0 and num_images > 0:
       # Auto-calculate the number of rows and cols for the figure
@@ -44,13 +53,26 @@ class Plotter(object):
     if not os.path.exists(folder):
       os.makedirs(folder)
     self.filepath = os.path.join(folder, 'frame{0:03d}.png')
+    self.do_save = True
+
+  @check_do_save
+  def save(self, img, filename=None):
+    if self.filepath:
+      filename = self.filepath.format(self.save_counter)
+      self.save_counter += 1
+    elif filename is None:
+      filename = self.out_filename
+
+    mpimg.imsave(filename, bgr2rgb(img))
+    print(filename + ' saved')
 
   @check_do_plot
-  def plot_one(self, img, save=False):
-    p = plt.subplot(self.rows, self.cols, self.counter)
+  def plot_one(self, img):
+    p = plt.subplot(self.rows, self.cols, self.plot_counter)
     p.axes.get_xaxis().set_visible(False)
     p.axes.get_yaxis().set_visible(False)
-    plt.imshow(img)
+    plt.imshow(bgr2rgb(img))
+    self.plot_counter += 1
 
   @check_do_plot
   def show(self):
