@@ -9,12 +9,12 @@
               [--width=<width>] [--height=<height>]
               [--num=<num_frames>] [--fps=<frames_per_second>]
               [--out_frames=<folder>] [--out_video=<filename>]
-              [--alpha] [--plot] [--keep_bg]
+              [--plot] [--background=(black|transparent|average)]
 
   Options:
     -h, --help              Show this screen.
     --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
-    --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
+    --dest=<dest_imgpath>   Filepath to destination image (.jpg, .jpeg, .png)
     --images=<folder>       Folderpath to images
     --width=<width>         Custom width of the images/video [default: 500]
     --height=<height>       Custom height of the images/video [default: 600]
@@ -22,9 +22,8 @@
     --fps=<fps>             Number frames per second for the video [default: 10]
     --out_frames=<folder>   Folder path to save all image frames
     --out_video=<filename>  Filename to save a video
-    --alpha                 Flag to save transparent background [default: False]
-    --keep_bg               Flag to keep and average background of destination and source images [default: False]
     --plot                  Flag to plot images [default: False]
+    --background=<bg>       Background of images to be one of (black|transparent|average) [default: black]
     --version               Show version.
 """
 from docopt import docopt
@@ -80,20 +79,16 @@ def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
          fname.lower().endswith('.jpeg')):
         yield os.path.join(images_folder, fname)
 
-def alpha_image(img, points):
-  mask = blender.mask_from_points(img.shape[:2], points)
-  return np.dstack((img, mask))
-
 def morph(src_img, src_points, dest_img, dest_points,
           video, width=500, height=600, num_frames=20, fps=10,
-          out_frames=None, out_video=None, alpha=False, plot=False, keep_bg=False):
+          out_frames=None, out_video=None, plot=False, background='black'):
   """
   Create a morph sequence from source to destination image
 
   :param src_img: ndarray source image
-  :param src_img: source image array of x,y face points
+  :param src_points: source image array of x,y face points
   :param dest_img: ndarray destination image
-  :param dest_img: destination image array of x,y face points
+  :param dest_points: destination image array of x,y face points
   :param video: facemorpher.videoer.Video object
   """
   size = (height, width)
@@ -110,15 +105,14 @@ def morph(src_img, src_points, dest_img, dest_points,
     src_face = warper.warp_image(src_img, src_points, points, size)
     end_face = warper.warp_image(dest_img, dest_points, points, size)
     average_face = blender.weighted_average(src_face, end_face, percent)
-    average_face = alpha_image(average_face, points) if alpha else average_face
 
-    # Average background (find transparent pixel, remove alpha from face image, and than replace transparent with averaged bg)
-    if (keep_bg):
-      average_background = blender.weighted_average(src_img, dest_img, percent)
-      average_face = alpha_image(average_face, points)
-      transparent_pixel = average_face[..., 3] == 0
-      average_face = average_face[..., :3]
-      average_face[transparent_pixel] = average_background[transparent_pixel]
+    if background in ('transparent', 'average'):
+      mask = blender.mask_from_points(average_face.shape[:2], points)
+      average_face = np.dstack((average_face, mask))
+
+      if background == 'average':
+        average_background = blender.weighted_average(src_img, dest_img, percent)
+        average_face = blender.overlay_image(average_face, mask, average_background)
 
     plt.plot_one(average_face)
     plt.save(average_face)
@@ -129,7 +123,7 @@ def morph(src_img, src_points, dest_img, dest_points,
   plt.show()
 
 def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
-            out_frames=None, out_video=None, alpha=False, plot=False, keep_bg=False):
+            out_frames=None, out_video=None, plot=False, background='black'):
   """
   Create a morph sequence from multiple images in imgpaths
 
@@ -140,7 +134,7 @@ def morpher(imgpaths, width=500, height=600, num_frames=20, fps=10,
   src_img, src_points = next(images_points_gen)
   for dest_img, dest_points in images_points_gen:
     morph(src_img, src_points, dest_img, dest_points, video,
-          width, height, num_frames, fps, out_frames, out_video, alpha, plot, keep_bg)
+          width, height, num_frames, fps, out_frames, out_video, plot, background)
     src_img, src_points = dest_img, dest_points
   video.end()
 
@@ -152,7 +146,7 @@ def main():
           int(args['--width']), int(args['--height']),
           int(args['--num']), int(args['--fps']),
           args['--out_frames'], args['--out_video'],
-          args['--alpha'], args['--plot'], args['--keep_bg'])
+          args['--plot'], args['--background'])
 
 
 if __name__ == "__main__":

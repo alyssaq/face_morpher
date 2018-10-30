@@ -4,6 +4,12 @@ import numpy as np
 import scipy.sparse
 
 def mask_from_points(size, points):
+  """ Create a mask of supplied size from supplied points
+  :param size: tuple of output mask size
+  :param points: array of [x, y] points
+  :returns: mask of values 0 and 255 where
+            255 indicates the convex hull containing the points
+  """
   radius = 10  # kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
@@ -12,6 +18,17 @@ def mask_from_points(size, points):
   mask = cv2.erode(mask, kernel)
 
   return mask
+
+def overlay_image(foreground_image, mask, background_image):
+  """ Overlay foreground image onto the background given a mask
+  :param foreground_image: foreground image points
+  :param mask: [0-255] values in mask
+  :param background_image: background image points
+  :returns: image with foreground where mask > 0 overlaid on background image
+  """
+  foreground_pixels = mask > 0
+  background_image[..., :3][foreground_pixels] = foreground_image[..., :3][foreground_pixels]
+  return background_image
 
 def apply_mask(img, mask):
   """ Apply mask to supplied image

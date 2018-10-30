@@ -4,19 +4,19 @@
   Face averager
 
   Usage:
-    averager.py --images=<images_folder> [--blur] [--alpha] [--plot]
+    averager.py --images=<images_folder> [--blur] [--plot] [--background=(black|transparent|average)]
               [--width=<width>] [--height=<height>] [--out=<filename>] [--destimg=<filename>]
 
   Options:
     -h, --help             Show this screen.
     --images=<folder>      Folder to images (.jpg, .jpeg, .png)
     --blur                 Flag to blur edges of image [default: False]
-    --alpha                Flag to save with transparent background [default: False]
     --width=<width>        Custom width of the images/video [default: 500]
     --height=<height>      Custom height of the images/video [default: 600]
     --out=<filename>       Filename to save the average face [default: result.png]
     --destimg=<filename>   Destination face image to overlay average face
     --plot                 Flag to display the average face [default: False]
+    --background=<bg>      Background of image to be one of (black|transparent|average) [default: black]
     --version              Show version.
 """
 
@@ -55,7 +55,7 @@ def load_image_points(path, size):
   else:
     return aligner.resize_align(img, points, size)
 
-def averager(imgpaths, dest_filename=None, width=500, height=600, alpha=False,
+def averager(imgpaths, dest_filename=None, width=500, height=600, background='black',
              blur_edges=False, out_filename='result.png', plot=False):
 
   size = (height, width)
@@ -94,8 +94,13 @@ def averager(imgpaths, dest_filename=None, width=500, height=600, alpha=False,
   if blur_edges:
     blur_radius = 10
     mask = cv2.blur(mask, (blur_radius, blur_radius))
-  if alpha:
+
+  if background in ('transparent', 'average'):
     dest_img = np.dstack((dest_img, mask))
+
+    if background == 'average':
+      average_background = locator.average_points(images)
+      dest_img = blender.overlay_image(dest_img, mask, average_background)
 
   print('Averaged {} images'.format(num_images))
   plt = plotter.Plotter(plot, num_images=1, out_filename=out_filename)
@@ -108,7 +113,7 @@ def main():
   try:
     averager(list_imgpaths(args['--images']), args['--destimg'],
              int(args['--width']), int(args['--height']),
-             args['--alpha'], args['--blur'], args['--out'], args['--plot'])
+             args['--background'], args['--blur'], args['--out'], args['--plot'])
   except Exception as e:
     print(e)
 
