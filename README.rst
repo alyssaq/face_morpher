@@ -57,7 +57,7 @@ All options listed in ``morpher.py`` (pasted below):
                 [--width=<width>] [--height=<height>]
                 [--num=<num_frames>] [--fps=<frames_per_second>]
                 [--out_frames=<folder>] [--out_video=<filename>]
-                [--alpha] [--plot]
+                [--alpha] [--plot] [--keep_bg]
 
     Options:
       -h, --help              Show this screen.
@@ -71,6 +71,7 @@ All options listed in ``morpher.py`` (pasted below):
       --out_frames=<folder>   Folder path to save all image frames
       --out_video=<filename>  Filename to save a video
       --alpha                 Flag to save transparent background [default: False]
+      --keep_bg               Flag to keep and average background of destination and source images [default: False]
       --plot                  Flag to plot images [default: False]
       --version               Show version.
 
