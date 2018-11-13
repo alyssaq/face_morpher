@@ -73,7 +73,7 @@ def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
     yield src_image
     yield dest_image
   else:
-    for fname in os.listdir(images_folder):
+    for fname in sorted(os.listdir(images_folder)):
       if (fname.lower().endswith('.jpg') or
          fname.lower().endswith('.png') or
          fname.lower().endswith('.jpeg')):
