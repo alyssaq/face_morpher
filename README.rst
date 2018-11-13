@@ -8,7 +8,7 @@ Face Morpher
 Built with Python, OpenCV, Numpy, Scipy, Stasm.
 
 | Supported on Python 2.7, Python 3.6+ and OpenCV >= 3 (tested with OpenCV 3.4.1)
-| Tested on macOS High Sierra and 64bit Linux (dockerized).
+| Tested on macOS Mojave and 64bit Linux (dockerized).
 
 Requirements
 --------------
@@ -53,27 +53,26 @@ All options listed in ``morpher.py`` (pasted below):
     Morph through all images in a folder
 
     Usage:
-      morpher.py (--src=<src_path> --dest=<dest_path> | --images=<folder>)
+        morpher.py (--src=<src_path> --dest=<dest_path> | --images=<folder>)
                 [--width=<width>] [--height=<height>]
                 [--num=<num_frames>] [--fps=<frames_per_second>]
                 [--out_frames=<folder>] [--out_video=<filename>]
-                [--alpha] [--plot] [--keep_bg]
+                [--plot] [--background=(black|transparent|average)]
 
     Options:
-      -h, --help              Show this screen.
-      --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
-      --dest=<dest_path>      Filepath to destination image (.jpg, .jpeg, .png)
-      --images=<folder>       Folderpath to images
-      --width=<width>         Custom width of the images/video [default: 500]
-      --height=<height>       Custom height of the images/video [default: 600]
-      --num=<num_frames>      Number of morph frames [default: 20]
-      --fps=<fps>             Number frames per second for the video [default: 10]
-      --out_frames=<folder>   Folder path to save all image frames
-      --out_video=<filename>  Filename to save a video
-      --alpha                 Flag to save transparent background [default: False]
-      --keep_bg               Flag to keep and average background of destination and source images [default: False]
-      --plot                  Flag to plot images [default: False]
-      --version               Show version.
+        -h, --help              Show this screen.
+        --src=<src_imgpath>     Filepath to source image (.jpg, .jpeg, .png)
+        --dest=<dest_imgpath>   Filepath to destination image (.jpg, .jpeg, .png)
+        --images=<folder>       Folderpath to images
+        --width=<width>         Custom width of the images/video [default: 500]
+        --height=<height>       Custom height of the images/video [default: 600]
+        --num=<num_frames>      Number of morph frames [default: 20]
+        --fps=<fps>             Number frames per second for the video [default: 10]
+        --out_frames=<folder>   Folder path to save all image frames
+        --out_video=<filename>  Filename to save a video
+        --plot                  Flag to plot images [default: False]
+        --background=<bg>       Background of images to be one of (black|transparent|average) [default: black]
+        --version               Show version.
 
 Averaging Faces
 ---------------
@@ -91,21 +90,22 @@ All options listed in ``averager.py`` (pasted below):
     Face averager
 
     Usage:
-      averager.py --images=<images_folder> [--blur] [--alpha] [--plot]
-                [--width=<width>] [--height=<height>] [--out=<filename>]
-                [--destimg=<filename>]
+        averager.py --images=<images_folder> [--blur] [--plot]
+                [--background=(black|transparent|average)]
+                [--width=<width>] [--height=<height>]
+                [--out=<filename>] [--destimg=<filename>]
 
     Options:
-      -h, --help             Show this screen.
-      --images=<folder>      Folder to images (.jpg, .jpeg, .png)
-      --blur                 Flag to blur edges of image [default: False]
-      --alpha                Flag to save with transparent background [default: False]
-      --width=<width>        Custom width of the images/video [default: 500]
-      --height=<height>      Custom height of the images/video [default: 600]
-      --out=<filename>       Filename to save the average face [default: result.png]
-      --destimg=<filename>   Destination face image to overlay average face
-      --plot                 Flag to display the average face [default: False]
-      --version              Show version.
+        -h, --help             Show this screen.
+        --images=<folder>      Folder to images (.jpg, .jpeg, .png)
+        --blur                 Flag to blur edges of image [default: False]
+        --width=<width>        Custom width of the images/video [default: 500]
+        --height=<height>      Custom height of the images/video [default: 600]
+        --out=<filename>       Filename to save the average face [default: result.png]
+        --destimg=<filename>   Destination face image to overlay average face
+        --plot                 Flag to display the average face [default: False]
+        --background=<bg>      Background of image to be one of (black|transparent|average) [default: black]
+        --version              Show version.
 
 Steps (facemorpher folder)
 --------------------------
@@ -182,7 +182,7 @@ Average all face images in a folder:
 
 85 images used
 
-| ``> python facemorpher/averager.py --images=images --blur --alpha``
+| ``> python facemorpher/averager.py --images=images --blur --background=transparent``
 | ``--width=220 --height=250``
 
 .. figure:: https://raw.github.com/alyssaq/face_morpher/master/examples/average_faces.png

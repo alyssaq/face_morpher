@@ -4,8 +4,10 @@
   Face averager
 
   Usage:
-    averager.py --images=<images_folder> [--blur] [--plot] [--background=(black|transparent|average)]
-              [--width=<width>] [--height=<height>] [--out=<filename>] [--destimg=<filename>]
+    averager.py --images=<images_folder> [--blur] [--plot]
+              [--background=(black|transparent|average)]
+              [--width=<width>] [--height=<height>]
+              [--out=<filename>] [--destimg=<filename>]
 
   Options:
     -h, --help             Show this screen.
