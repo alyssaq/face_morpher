@@ -15,7 +15,7 @@ class OverrideInstall(install):
 
 setup(
   name='facemorpher',
-  version='5.1.0',
+  version='5.2.0',
   author='Alyssa Quek',
   author_email='alyssaquek@gmail.com',
   description=('Warp, morph and average human faces!'),
