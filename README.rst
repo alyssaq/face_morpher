@@ -9,7 +9,7 @@ Built with Python, OpenCV, Numpy, Scipy, Stasm.
 
 | Supported on Python 2.7, Python 3.6+ and OpenCV 3.4 (tested with OpenCV 3.4.1)
 | Does NOT work with OpenCV 4.
-| To install OpenCV 3.4.5: `brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/aaf45348653fc45674b7d798404f2cc9700e6f9c/Formula/opencv.rb`
+| To install OpenCV 3.4.5_1: `brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/42abf2c5fa00318e2bffca6afa2455a61ba63d8f/Formula/opencv.rb`
 | Tested on macOS Mojave and 64bit Linux (dockerized).
 
 Requirements
