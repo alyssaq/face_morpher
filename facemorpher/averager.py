@@ -23,7 +23,6 @@
 """
 
 from docopt import docopt
-from builtins import range
 import os
 import cv2
 import numpy as np

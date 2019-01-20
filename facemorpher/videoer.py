@@ -2,7 +2,6 @@
 Create a video with image frames
 """
 
-from builtins import range
 import cv2
 import numpy as np
 

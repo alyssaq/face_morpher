@@ -2,4 +2,3 @@ numpy
 scipy
 matplotlib
 docopt
-stasm

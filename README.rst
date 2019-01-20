@@ -5,7 +5,7 @@ Face Morpher
 | Scripts will automatically detect frontal faces and skip images if
   none is detected.
 
-Built with Python, OpenCV, Numpy, Scipy, Stasm.
+Built with Python, OpenCV, Numpy, Scipy, dlib.
 
 | Supported on Python 2.7, Python 3.6+ and OpenCV >= 3 (tested with OpenCV 3.4.1)
 | Tested on macOS Mojave and 64bit Linux (dockerized).
@@ -13,8 +13,9 @@ Built with Python, OpenCV, Numpy, Scipy, Stasm.
 Requirements
 --------------
 -  Install `OpenCV`_: `Mac installation steps`_
--  Note: OpenCV must be installed either from `Homebrew`_ or `source`_ as stasm requires the library files.
 -  ``pip install -r requirements.txt``
+- Download `http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2` and extract file.
+- Export `DBLIB_DATA_DIR` to the folder where `shape_predictor_68_face_landmarks.dat` is located. E.g `DBLIB_DATA_DIR=/Downloads/data`
 
 Either:
 
@@ -113,7 +114,7 @@ Steps (facemorpher folder)
 1. Locator
 ^^^^^^^^^^
 
--  Locates face points (using `stasm`_)
+-  Locates face points
 -  For a different locator, return an array of (x, y) control face
    points
 
@@ -235,10 +236,6 @@ Once you're in the container, install ``facemorpher`` and try the examples liste
     root@0dad0912ebbe:/# pip install facemorpher
     root@0dad0912ebbe:/# facemorpher --src=<img1> --dest=<img2> --plot
 
-Details
-------------
--  Face points are detected with stasm. This library relies on the `python wrapper around stasm`_.
-
 Documentation
 -------------
 
@@ -261,5 +258,3 @@ License
 .. _OpenCV: http://opencv.org
 .. _Homebrew: https://brew.sh
 .. _source: https://github.com/opencv/opencv
-.. _python wrapper around stasm: https://github.com/alyssaq/stasm
-.. _stasm: http://www.milbo.users.sonic.net/stasm

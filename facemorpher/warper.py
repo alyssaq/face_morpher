@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.spatial as spatial
-from builtins import range
 
 def bilinear_interpolate(img, coords):
   """ Interpolates over every image channel
