@@ -7,15 +7,15 @@ Face Morpher
 
 Built with Python, OpenCV, Numpy, Scipy, Stasm.
 
-| Supported on Python 2.7, Python 3.6+ and OpenCV 3.4 (tested with OpenCV 3.4.1)
+| Supported on Python 2.7, Python 3.6+ and OpenCV 3.4 (tested with OpenCV 3.4.5)
 | Does NOT work with OpenCV 4.
-| To install OpenCV 3.4.5_1: ``brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/42abf2c5fa00318e2bffca6afa2455a61ba63d8f/Formula/opencv.rb``
+| To install OpenCV 3.4.5: ``brew install opencv@3``
 | Tested on macOS Mojave and 64bit Linux (dockerized).
 
 Requirements
 --------------
 -  Install `OpenCV`_: `Mac installation steps`_
--  Note: OpenCV must be installed either from `Homebrew`_ or `source`_ as stasm requires the library files.
+-  Note: OpenCV 3 must be installed either from `Homebrew`_ or `source`_ as stasm requires the library files.
 -  ``pip install -r requirements.txt``
 
 Either:
