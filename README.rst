@@ -5,17 +5,16 @@ Face Morpher
 | Scripts will automatically detect frontal faces and skip images if
   none is detected.
 
-Built with Python, OpenCV, Numpy, Scipy, dlib.
+Built with Python, `dlib`_, Numpy, Scipy, dlib.
 
-| Supported on Python 2.7, Python 3.6+ and OpenCV >= 3 (tested with OpenCV 3.4.1)
+| Supported on Python 2.7, Python 3.6+
 | Tested on macOS Mojave and 64bit Linux (dockerized).
 
 Requirements
 --------------
--  Install `OpenCV`_: `Mac installation steps`_
 -  ``pip install -r requirements.txt``
 - Download `http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2` and extract file.
-- Export environment variable ``DLIB_DATA_DIR`` to the folder where ``shape_predictor_68_face_landmarks.dat`` is located. E.g ``export DLIB_DATA_DIR=/Downloads/data``
+- Export environment variable ``DLIB_DATA_DIR`` to the folder where ``shape_predictor_68_face_landmarks.dat`` is located. Default ``data``. E.g ``export DLIB_DATA_DIR=/Downloads/data``
 
 Either:
 
@@ -258,3 +257,4 @@ License
 .. _OpenCV: http://opencv.org
 .. _Homebrew: https://brew.sh
 .. _source: https://github.com/opencv/opencv
+.. _dlib: http://dlib.net
