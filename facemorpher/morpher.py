@@ -22,7 +22,7 @@
     --fps=<fps>             Number frames per second for the video [default: 10]
     --out_frames=<folder>   Folder path to save all image frames
     --out_video=<filename>  Filename to save a video
-    --plot                  Flag to plot images [default: False]
+    --plot                  Flag to plot images to result.png [default: False]
     --background=<bg>       Background of images to be one of (black|transparent|average) [default: black]
     --version               Show version.
 """

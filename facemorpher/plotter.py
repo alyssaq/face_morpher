@@ -79,7 +79,8 @@ class Plotter(object):
     plt.gcf().subplots_adjust(hspace=0.05, wspace=0,
                               left=0, bottom=0, right=1, top=0.98)
     plt.axis('off')
-    plt.show()
+    #plt.show()
+    plt.savefig('result.png')
 
   @check_do_plot
   def plot_mesh(self, points, tri, color='k'):
