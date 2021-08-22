@@ -95,19 +95,22 @@ def test_local():
   import cv2
   import scipy.misc
   import locator
+  import dlib
   import aligner
   from matplotlib import pyplot as plt
 
   # Load source image
   face_points_func = partial(locator.face_points, '../data')
-  base_path = '../females/Screenshot 2015-03-04 17.11.12.png'
-  src_path = '../females/BlDmB5QCYAAY8iw.jpg'
+  dlib_detector = dlib.get_frontal_face_detector()
+
+  base_path = r"F:\Photos\Adi\Actresses\Sara Jay\Screenshots\Sara Jay Sucks Cock in the Closet - Pornhub.com.ts_20210619_103500.199.jpg"
+  src_path = r"F:\Photos\Adi\Remini\Natalia Lavov\Whatsup\Remini20210509150317225 (3).jpg"
   src_img = cv2.imread(src_path)
 
   # Define control points for warps
-  src_points = face_points_func(src_path)
+  src_points = face_points_func(src_img)
   base_img = cv2.imread(base_path)
-  base_points = face_points_func(base_path)
+  base_points = face_points_func(base_img)
 
   size = (600, 500)
   src_img, src_points = aligner.resize_align(src_img, src_points, size)
