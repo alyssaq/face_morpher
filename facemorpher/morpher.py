@@ -31,12 +31,19 @@ import os
 import numpy as np
 import cv2
 
-from facemorpher import locator
-from facemorpher import aligner
-from facemorpher import warper
-from facemorpher import blender
-from facemorpher import plotter
-from facemorpher import videoer
+#from facemorpher import locator
+#from facemorpher import aligner
+#from facemorpher import warper
+#from facemorpher import blender
+#from facemorpher import plotter
+#from facemorpher import videoer
+
+import locator
+import aligner
+import warper
+import blender
+import plotter
+import videoer
 
 def verify_args(args):
   if args['--images'] is None:
