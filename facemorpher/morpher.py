@@ -31,12 +31,12 @@ import os
 import numpy as np
 import cv2
 
-from facemorpher import locator
-from facemorpher import aligner
-from facemorpher import warper
-from facemorpher import blender
-from facemorpher import plotter
-from facemorpher import videoer
+import locator
+import aligner
+import warper
+import blender
+import plotter
+import videoer
 
 def verify_args(args):
   if args['--images'] is None:
@@ -113,6 +113,7 @@ def morph(src_img, src_points, dest_img, dest_points,
       if background == 'average':
         average_background = blender.weighted_average(src_img, dest_img, percent)
         average_face = blender.overlay_image(average_face, mask, average_background)
+        average_face = average_face.astype(np.uint8)
 
     plt.plot_one(average_face)
     plt.save(average_face)
