@@ -102,6 +102,7 @@ def averager(imgpaths, dest_filename=None, width=500, height=600, background='bl
     if background == 'average':
       average_background = locator.average_points(images)
       dest_img = blender.overlay_image(dest_img, mask, average_background)
+      dest_img = dest_img.astype(np.uint8)
 
   print('Averaged {} images'.format(num_images))
   plt = plotter.Plotter(plot, num_images=1, out_filename=out_filename)
