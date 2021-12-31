@@ -29,11 +29,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-from facemorpher import locator
-from facemorpher import aligner
-from facemorpher import warper
-from facemorpher import blender
-from facemorpher import plotter
+import locator
+import aligner
+import warper
+import blender
+import plotter
 
 def list_imgpaths(imgfolder):
   for fname in os.listdir(imgfolder):
