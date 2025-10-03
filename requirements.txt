@@ -3,3 +3,4 @@ scipy
 matplotlib
 docopt
 dlib
+opencv-python
