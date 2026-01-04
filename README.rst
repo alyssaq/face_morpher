@@ -31,6 +31,10 @@ Use as local command-line utility
 ::
 
     $ git clone https://github.com/alyssaq/face_morpher
+    $ cd face_morpher
+    $ pip install -r requirements.txt
+    $ python setup.py install --user # This will install in your own user directory (default is ~/.local/bin)
+    $ facemorpher --help   # From there you should be able to use the command line right-away
 
 Morphing Faces
 --------------
